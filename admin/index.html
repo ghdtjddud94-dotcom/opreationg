@@ -6,12 +6,12 @@
   <title>어드민 대시보드 - 전체 현황</title>
   <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     :root {
-      --bg: #0a0a0f; --card: #1a1a26; --card2: #1e1e2e;
-      --border: rgba(255,255,255,0.07); --accent: #7c6af7; --accent2: #5eead4;
-      --text: #f0f0f8; --muted: #6b6b80;
-      --success: #22c55e; --warn: #f59e0b; --danger: #ef4444;
+      --bg:#0a0a0f; --card:#1a1a26; --card2:#1e1e2e;
+      --border:rgba(255,255,255,0.07); --accent:#7c6af7; --accent2:#5eead4;
+      --text:#f0f0f8; --muted:#6b6b80;
+      --success:#22c55e; --warn:#f59e0b; --danger:#ef4444;
     }
     body { font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding-bottom:60px; }
     .glow { position:fixed; top:-200px; left:50%; transform:translateX(-50%); width:900px; height:500px; background:radial-gradient(ellipse,rgba(124,106,247,0.11) 0%,transparent 70%); pointer-events:none; z-index:0; }
@@ -26,97 +26,130 @@
     .lupdate { font-size:11px; color:var(--muted); }
 
     /* 메인 */
-    .main { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:26px 20px 0; }
+    .main { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:24px 20px 0; }
     .sec-title { font-size:11px; font-weight:600; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:12px; }
 
     /* 요약 카드 */
-    .sum-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin-bottom:22px; }
+    .sum-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-bottom:24px; }
     .sc { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
     .sc .sl { font-size:11px; color:var(--muted); margin-bottom:7px; }
     .sc .sv { font-size:24px; font-weight:800; }
     .sc .ss { font-size:11px; color:var(--muted); margin-top:3px; }
-    .cp .sv { color:var(--accent); }
-    .cg .sv { color:var(--success); }
-    .cy .sv { color:var(--warn); }
-    .ct .sv { color:var(--accent2); }
+    .cp .sv{color:var(--accent);} .cg .sv{color:var(--success);} .cy .sv{color:var(--warn);} .ct .sv{color:var(--accent2);}
 
-    /* 이달 정산 하이라이트 */
-    .settle-hl { background:linear-gradient(135deg,rgba(94,234,212,0.08),rgba(124,106,247,0.07)); border:1px solid rgba(94,234,212,0.18); border-radius:16px; padding:18px 22px; margin-bottom:26px; display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; }
-    .sh-icon { font-size:28px; margin-top:2px; }
-    .sh-body { flex:1; min-width:200px; }
-    .sh-title { font-size:13px; font-weight:700; color:var(--accent2); margin-bottom:2px; }
-    .sh-sub { font-size:12px; color:var(--muted); margin-bottom:12px; }
-    .sh-nums { display:flex; gap:28px; flex-wrap:wrap; }
-    .sh-num .nl { font-size:11px; color:var(--muted); margin-bottom:3px; }
-    .sh-num .nv { font-size:21px; font-weight:800; }
-    .nv-count { color:var(--accent); }
-    .nv-total { color:var(--accent2); }
-    .sh-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
-    .sh-chip { padding:4px 11px; background:rgba(94,234,212,0.1); border:1px solid rgba(94,234,212,0.18); border-radius:100px; font-size:12px; color:var(--accent2); }
-    .sh-chip span { color:var(--muted); font-size:11px; margin-left:3px; }
+    /* 2단 레이아웃 (오늘의 업무 + 이달 정산) */
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
+    @media(max-width:700px) { .two-col { grid-template-columns:1fr; } }
 
-    /* 수주 유형 필터 */
-    .filter-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; }
+    /* 오늘의 업무 */
+    .today-box { background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden; }
+    .box-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+    .box-header .bh-icon { font-size:20px; }
+    .box-header .bh-title { font-size:14px; font-weight:700; }
+    .box-header .bh-badge { margin-left:auto; padding:3px 10px; background:rgba(124,106,247,0.15); border-radius:100px; font-size:12px; color:var(--accent); font-weight:600; }
+    .box-body { padding:14px 16px; max-height:280px; overflow-y:auto; }
+    .box-body::-webkit-scrollbar { width:4px; }
+    .box-body::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
+    .today-item { display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:9px; margin-bottom:4px; background:rgba(255,255,255,0.02); }
+    .today-item:last-child { margin-bottom:0; }
+    .ti-avatar { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+    .c1{background:rgba(239,68,68,0.2);color:#f87171;} .c2{background:rgba(234,179,8,0.2);color:#fbbf24;}
+    .c3{background:rgba(34,197,94,0.2);color:#4ade80;} .c4{background:rgba(59,130,246,0.2);color:#60a5fa;}
+    .c5{background:rgba(168,85,247,0.2);color:#c084fc;}
+    .ti-info { flex:1; min-width:0; }
+    .ti-brand { font-size:11px; color:var(--muted); }
+    .ti-label { font-size:13px; font-weight:500; }
+    .ti-check { width:18px; height:18px; border-radius:5px; border:2px solid rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .ti-check.done { background:var(--success); border-color:var(--success); }
+    .ti-check.done::after { content:'✓'; color:#fff; font-size:10px; font-weight:700; }
+    .box-empty { padding:28px 16px; text-align:center; color:var(--muted); font-size:13px; }
+
+    /* 이달 정산 리스트 */
+    .settle-box { background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden; }
+    .settle-item { display:flex; align-items:center; gap:10px; padding:10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); }
+    .settle-item:last-child { border-bottom:none; }
+    .settle-date-lbl { font-size:12px; color:var(--accent2); font-weight:600; white-space:nowrap; }
+    .settle-info { flex:1; min-width:0; }
+    .settle-brand { font-size:13px; font-weight:600; }
+    .settle-member { font-size:11px; color:var(--muted); }
+    .settle-amount { font-size:13px; font-weight:700; color:var(--text); white-space:nowrap; }
+    .settle-total-row { padding:12px 16px; background:rgba(94,234,212,0.05); border-top:1px solid rgba(94,234,212,0.15); display:flex; justify-content:space-between; align-items:center; }
+    .settle-total-lbl { font-size:12px; color:var(--muted); }
+    .settle-total-val { font-size:16px; font-weight:800; color:var(--accent2); }
+
+    /* 캘린더 */
+    .cal-wrap { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:20px; margin-bottom:24px; }
+    .cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .cal-nav { background:rgba(255,255,255,0.06); border:1px solid var(--border); border-radius:8px; color:var(--text); width:32px; height:32px; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+    .cal-nav:hover { background:rgba(255,255,255,0.1); }
+    .cal-month-lbl { font-size:15px; font-weight:700; }
+    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-bottom:12px; }
+    .cal-dayname { text-align:center; font-size:11px; color:var(--muted); font-weight:600; padding:4px 0 8px; }
+    .cal-dayname:first-child { color:#f87171; }
+    .cal-dayname:last-child { color:#60a5fa; }
+    .cal-day-empty { min-height:60px; }
+    .cal-day { min-height:60px; border-radius:8px; padding:5px; cursor:pointer; transition:background 0.15s; }
+    .cal-day:hover { background:rgba(255,255,255,0.04); }
+    .cal-day.today .day-num { background:var(--accent); color:#fff; border-radius:50%; }
+    .cal-day.selected { background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.3); }
+    .day-num { width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:500; margin:0 auto 4px; border-radius:50%; }
+    .cal-day.sun .day-num { color:#f87171; }
+    .cal-day.sat .day-num { color:#60a5fa; }
+    .cal-day-items { display:flex; flex-direction:column; gap:2px; }
+    .cal-day-chip { font-size:10px; padding:1px 5px; border-radius:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:500; }
+    .cal-dots { display:flex; gap:2px; justify-content:center; flex-wrap:wrap; margin-top:2px; }
+    .cal-dot { width:5px; height:5px; border-radius:50%; }
+
+    /* 캘린더 상세 패널 */
+    .cal-detail { padding:14px 16px; background:rgba(255,255,255,0.02); border-radius:12px; margin-top:12px; display:none; }
+    .cal-detail.show { display:block; }
+    .cal-detail-title { font-size:13px; font-weight:700; color:var(--accent2); margin-bottom:10px; }
+    .cal-detail-items { display:flex; flex-direction:column; gap:6px; }
+    .cd-item { display:flex; align-items:center; gap:10px; padding:8px 12px; background:var(--card2); border-radius:10px; }
+    .cd-avatar { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; }
+    .cd-info .cd-brand { font-size:11px; color:var(--muted); }
+    .cd-info .cd-label { font-size:13px; font-weight:500; }
+    .cd-check { width:18px; height:18px; border-radius:5px; border:2px solid rgba(255,255,255,0.15); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+    .cd-check.done { background:var(--success); border-color:var(--success); }
+    .cd-check.done::after { content:'✓'; color:#fff; font-size:10px; font-weight:700; }
+
+    /* 팀원별 현황 */
+    .filter-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
     .filter-btn { padding:5px 13px; border-radius:100px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:12px; font-weight:500; cursor:pointer; font-family:inherit; transition:all 0.2s; }
     .filter-btn.active { background:rgba(124,106,247,0.15); border-color:rgba(124,106,247,0.4); color:var(--text); }
-
-    /* 팀원 섹션 */
-    .members-wrap { display:flex; flex-direction:column; gap:18px; }
+    .members-wrap { display:flex; flex-direction:column; gap:16px; }
     .member-sec { background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden; }
-    .msec-header { padding:15px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border); }
-    .mavatar { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; flex-shrink:0; }
-    .c1{background:rgba(239,68,68,0.2);color:#f87171;}
-    .c2{background:rgba(234,179,8,0.2);color:#fbbf24;}
-    .c3{background:rgba(34,197,94,0.2);color:#4ade80;}
-    .c4{background:rgba(59,130,246,0.2);color:#60a5fa;}
-    .c5{background:rgba(168,85,247,0.2);color:#c084fc;}
+    .msec-header { padding:14px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border); }
+    .mavatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0; }
     .msec-header .mname { font-size:15px; font-weight:700; }
     .msec-header .mstats { font-size:12px; color:var(--muted); margin-top:2px; }
-    .mrate { font-size:19px; font-weight:800; margin-right:4px; }
+    .mrate { font-size:18px; font-weight:800; margin-right:4px; }
     .rg{color:var(--success);} .ry{color:var(--warn);} .rr{color:var(--danger);}
     .mlink { margin-left:auto; padding:5px 11px; background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.22); border-radius:7px; color:var(--accent); font-size:12px; font-weight:600; text-decoration:none; transition:all 0.2s; white-space:nowrap; }
     .mlink:hover { background:rgba(124,106,247,0.2); }
-
-    /* 브랜드 테이블 */
     .btable { width:100%; border-collapse:collapse; }
     .btable th { padding:8px 14px; font-size:11px; font-weight:600; color:var(--muted); text-align:left; border-bottom:1px solid var(--border); background:rgba(255,255,255,0.02); }
-    .btable td { padding:12px 14px; font-size:13px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
+    .btable td { padding:11px 14px; font-size:13px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
     .btable tr:last-child td { border-bottom:none; }
     .btable tr:hover td { background:rgba(255,255,255,0.02); }
-
     .brand-cell { display:flex; align-items:center; gap:8px; font-weight:600; }
     .bdot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-
-    /* 유형 뱃지 */
     .tbadge { padding:2px 8px; border-radius:100px; font-size:11px; font-weight:600; }
-    .tb-out{background:rgba(239,68,68,0.15);color:#f87171;}
-    .tb-in{background:rgba(59,130,246,0.15);color:#60a5fa;}
-    .tb-ref{background:rgba(234,179,8,0.15);color:#fbbf24;}
-    .tb-renew{background:rgba(34,197,94,0.15);color:#4ade80;}
-
-    /* 태스크 진행 */
-    .task-progress { display:flex; gap:3px; flex-wrap:wrap; }
-    .tp-dot { width:10px; height:10px; border-radius:3px; }
-    .tp-dot.done { background:var(--success); }
-    .tp-dot.todo { background:rgba(255,255,255,0.1); }
-
-    /* 진행률 바 */
-    .pbar-wrap { min-width:90px; }
-    .pbar-bg { height:5px; border-radius:100px; background:rgba(255,255,255,0.06); overflow:hidden; margin-bottom:3px; }
+    .tb-out{background:rgba(239,68,68,0.15);color:#f87171;} .tb-in{background:rgba(59,130,246,0.15);color:#60a5fa;}
+    .tb-ref{background:rgba(234,179,8,0.15);color:#fbbf24;} .tb-renew{background:rgba(34,197,94,0.15);color:#4ade80;}
+    .task-progress { display:flex; gap:2px; flex-wrap:wrap; }
+    .tp-dot { width:9px; height:9px; border-radius:3px; }
+    .tp-dot.done{background:var(--success);} .tp-dot.todo{background:rgba(255,255,255,0.1);}
+    .pbar-wrap { min-width:80px; }
+    .pbar-bg { height:4px; border-radius:100px; background:rgba(255,255,255,0.06); overflow:hidden; margin-bottom:3px; }
     .pbar-fill { height:100%; border-radius:100px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
     .pbar-txt { font-size:11px; color:var(--muted); }
-
-    /* 정산 셀 */
     .settle-cell { font-size:12px; }
-    .settle-date { color:var(--accent2); font-weight:600; }
-    .settle-amt { color:var(--text); margin-top:1px; }
-    .settle-none { color:var(--muted); }
-
-    /* 수주금액 */
-    .contract-amt { font-size:12px; color:var(--accent); font-weight:600; }
-    .contract-none { color:var(--muted); font-size:12px; }
-
-    /* 빈 행 */
+    .sd { color:var(--accent2); font-weight:600; }
+    .sa { color:var(--text); margin-top:1px; }
+    .sn { color:var(--muted); }
+    .ca { font-size:12px; color:var(--accent); font-weight:600; }
+    .cn { font-size:12px; color:var(--muted); }
     .empty-row td { text-align:center; padding:24px; color:var(--muted); font-size:13px; }
 
     /* 로딩 */
@@ -124,9 +157,9 @@
     .spinner { width:34px; height:34px; border:3px solid rgba(124,106,247,0.2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 14px; }
     @keyframes spin { to{transform:rotate(360deg);} }
 
-    @media (max-width:680px) {
-      .btable th:nth-child(4), .btable td:nth-child(4),
-      .btable th:nth-child(5), .btable td:nth-child(5) { display:none; }
+    @media(max-width:680px) {
+      .btable th:nth-child(4),.btable td:nth-child(4),
+      .btable th:nth-child(5),.btable td:nth-child(5) { display:none; }
     }
   </style>
 </head>
@@ -146,12 +179,46 @@
   <div class="main">
     <div class="loading" id="loadingEl"><div class="spinner"></div><div>불러오는 중...</div></div>
     <div id="content" style="display:none">
+
+      <!-- 전체 요약 -->
       <div class="sec-title">전체 요약</div>
       <div class="sum-grid" id="sumGrid"></div>
 
-      <div class="settle-hl" id="settleHl"></div>
+      <!-- 오늘의 업무 + 이달 정산 -->
+      <div class="sec-title">오늘의 업무 &amp; 이달 정산</div>
+      <div class="two-col">
+        <div class="today-box">
+          <div class="box-header">
+            <span class="bh-icon">☀️</span>
+            <span class="bh-title" id="todayTitle">오늘의 업무</span>
+            <span class="bh-badge" id="todayBadge">0건</span>
+          </div>
+          <div class="box-body" id="todayBody"></div>
+        </div>
+        <div class="settle-box">
+          <div class="box-header">
+            <span class="bh-icon">💰</span>
+            <span class="bh-title" id="settleTitle">이달 정산</span>
+            <span class="bh-badge" id="settleBadge" style="background:rgba(94,234,212,0.15);color:var(--accent2)">0건</span>
+          </div>
+          <div class="box-body" id="settleBody"></div>
+        </div>
+      </div>
 
-      <div class="sec-title" style="margin-top:4px">팀원별 현황</div>
+      <!-- 캘린더 -->
+      <div class="sec-title">일정 캘린더</div>
+      <div class="cal-wrap">
+        <div class="cal-header">
+          <button class="cal-nav" id="calPrev">‹</button>
+          <div class="cal-month-lbl" id="calMonthLbl"></div>
+          <button class="cal-nav" id="calNext">›</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-detail" id="calDetail"></div>
+      </div>
+
+      <!-- 팀원별 현황 -->
+      <div class="sec-title">팀원별 현황</div>
       <div class="filter-row" id="filterRow">
         <button class="filter-btn active" data-f="전체">전체</button>
         <button class="filter-btn" data-f="아웃바운드">아웃바운드</button>
@@ -174,30 +241,30 @@
       {name:'김병찬',cls:'c1'},{name:'김요엘',cls:'c2'},{name:'최진유',cls:'c3'},
       {name:'강사랑',cls:'c4'},{name:'신예지',cls:'c5'},
     ];
+    const MEMBER_COLORS = { '김병찬':'#f87171','김요엘':'#fbbf24','최진유':'#4ade80','강사랑':'#60a5fa','신예지':'#c084fc' };
+    const MEMBER_CLS = { '김병찬':'c1','김요엘':'c2','최진유':'c3','강사랑':'c4','신예지':'c5' };
     const TASKS = [
-      {key:'meeting_prep',  label:'미팅자료준비'},
-      {key:'meeting',       label:'미팅'},
-      {key:'proposal',      label:'실행안/제안서'},
-      {key:'google_sheet',  label:'구글시트 생성'},
-      {key:'vendor_upload', label:'업체 업로드'},
-      {key:'quotation',     label:'견적서'},
-      {key:'contract',      label:'계약서'},
-      {key:'invoice',       label:'계산서 발행'},
-      {key:'kickoff',       label:'킥오프미팅'},
-      {key:'review_meeting',label:'리뷰미팅'},
-      {key:'settlement',    label:'정산일자'},
+      {key:'meeting_prep',label:'미팅자료준비'},{key:'meeting',label:'미팅'},
+      {key:'proposal',label:'실행안/제안서'},{key:'google_sheet',label:'구글시트 생성'},
+      {key:'vendor_upload',label:'업체 업로드'},{key:'quotation',label:'견적서'},
+      {key:'contract',label:'계약서'},{key:'invoice',label:'계산서 발행'},
+      {key:'kickoff',label:'킥오프미팅'},{key:'review_meeting',label:'리뷰미팅'},
+      {key:'settlement',label:'정산일자'},
     ];
     const TYPE_MAP = {'아웃바운드':'tb-out','인바운드':'tb-in','소개건':'tb-ref','연장':'tb-renew'};
 
     let allBrands = [];
     let activeFilter = '전체';
+    let calYear = new Date().getFullYear();
+    let calMonth = new Date().getMonth();
+    let selectedDate = null;
 
     async function load() {
       document.getElementById('loadingEl').style.display = 'block';
       document.getElementById('content').style.display = 'none';
       const { data, error } = await sb
         .from('op_brands').select('*, op_tasks(*)')
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending:true });
       document.getElementById('loadingEl').style.display = 'none';
       if (error) { alert('로드 실패: ' + error.message); return; }
       allBrands = data || [];
@@ -207,17 +274,14 @@
       document.getElementById('content').style.display = 'block';
     }
 
-    function isDone(tasks, key) {
-      return tasks.some(t => t.task_key === key && t.is_completed);
-    }
+    function isDone(tasks, key) { return tasks.some(t => t.task_key === key && t.is_completed); }
 
     function render() {
       const now = new Date();
+      const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
       const yy = now.getFullYear(), mm = now.getMonth();
 
-      const filtered = activeFilter === '전체'
-        ? allBrands
-        : allBrands.filter(b => b.brand_type === activeFilter);
+      const filtered = activeFilter === '전체' ? allBrands : allBrands.filter(b => b.brand_type === activeFilter);
 
       // 전체 통계
       let tDone = 0, tTotal = 0;
@@ -229,44 +293,169 @@
         const tasks = b.op_tasks || [];
         return TASKS.every(t => isDone(tasks, t.key));
       }).length;
-      const overallPct = tTotal > 0 ? Math.round((tDone/tTotal)*100) : 0;
+      const pct = tTotal > 0 ? Math.round((tDone/tTotal)*100) : 0;
 
-      // 이달 정산
-      const mBrands = filtered.filter(b => {
-        if (!b.settlement_date) return false;
-        const d = new Date(b.settlement_date);
-        return d.getFullYear() === yy && d.getMonth() === mm;
-      });
-      const mTotal = mBrands.reduce((s,b) => s + (b.settlement_amount||0), 0);
-
-      // 요약 카드
       document.getElementById('sumGrid').innerHTML = `
         <div class="sc cp"><div class="sl">전체 브랜드</div><div class="sv">${filtered.length}</div><div class="ss">팀 합산</div></div>
         <div class="sc cg"><div class="sl">완전 완료</div><div class="sv">${completed}</div><div class="ss">모든 항목 체크</div></div>
         <div class="sc cy"><div class="sl">진행 중</div><div class="sv">${filtered.length-completed}</div><div class="ss">미완료 있음</div></div>
-        <div class="sc ct"><div class="sl">전체 완료율</div><div class="sv">${overallPct}%</div><div class="ss">${tDone}/${tTotal}</div></div>
+        <div class="sc ct"><div class="sl">전체 완료율</div><div class="sv">${pct}%</div><div class="ss">${tDone}/${tTotal}</div></div>
       `;
 
-      // 이달 정산 하이라이트
-      const chipHtml = mBrands.map(b =>
-        `<div class="sh-chip">${b.brand_name}<span>${b.member_name}</span></div>`).join('');
-      document.getElementById('settleHl').innerHTML = `
-        <div class="sh-icon">💰</div>
-        <div class="sh-body">
-          <div class="sh-title">${now.getMonth()+1}월 정산 현황</div>
-          <div class="sh-sub">${yy}년 ${now.getMonth()+1}월 기준 · 30초마다 자동 갱신</div>
-          <div class="sh-nums">
-            <div class="sh-num"><div class="nl">정산 건수</div><div class="nv nv-count">${mBrands.length}건</div></div>
-            <div class="sh-num"><div class="nl">정산 총액</div><div class="nv nv-total">${mTotal.toLocaleString('ko-KR')}원</div></div>
-          </div>
-          ${mBrands.length > 0 ? `<div class="sh-chips">${chipHtml}</div>` : ''}
-        </div>
-      `;
+      // ── 오늘의 업무
+      const todayItems = [];
+      allBrands.forEach(b => {
+        const tasks = b.op_tasks || [];
+        tasks.forEach(task => {
+          if (task.task_date === todayStr) {
+            const def = TASKS.find(t => t.key === task.task_key);
+            todayItems.push({ memberName: b.member_name, brandName: b.brand_name, label: def?.label || task.task_key, isDone: task.is_completed });
+          }
+        });
+        if (b.settlement_date === todayStr) {
+          todayItems.push({ memberName: b.member_name, brandName: b.brand_name, label: '정산일자', isDone: true, isSettle: true });
+        }
+      });
+      const todayDate = now.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'});
+      document.getElementById('todayTitle').textContent = `오늘의 업무 (${todayDate})`;
+      document.getElementById('todayBadge').textContent = `${todayItems.length}건`;
+      document.getElementById('todayBody').innerHTML = todayItems.length
+        ? todayItems.map(it => `
+            <div class="today-item">
+              <div class="ti-avatar ${MEMBER_CLS[it.memberName]||'c1'}">${it.memberName[1]}</div>
+              <div class="ti-info">
+                <div class="ti-brand">${it.memberName} · ${it.brandName}</div>
+                <div class="ti-label">${it.label}</div>
+              </div>
+              <div class="ti-check ${it.isDone?'done':''}"></div>
+            </div>`).join('')
+        : '<div class="box-empty">오늘 예정된 업무가 없어요</div>';
 
-      // 팀원별
+      // ── 이달 정산 리스트
+      const mBrands = allBrands.filter(b => {
+        if (!b.settlement_date) return false;
+        const d = new Date(b.settlement_date);
+        return d.getFullYear() === yy && d.getMonth() === mm;
+      }).sort((a,b) => a.settlement_date.localeCompare(b.settlement_date));
+      const mTotal = mBrands.reduce((s,b) => s + (b.settlement_amount||0), 0);
+      document.getElementById('settleTitle').textContent = `${mm+1}월 정산 리스트`;
+      document.getElementById('settleBadge').textContent = `${mBrands.length}건`;
+      const settleBody = document.getElementById('settleBody');
+      if (!mBrands.length) {
+        settleBody.innerHTML = '<div class="box-empty">이달 정산 건이 없어요</div>';
+      } else {
+        settleBody.innerHTML = mBrands.map(b => {
+          const d = new Date(b.settlement_date);
+          const ds = d.toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'});
+          return `<div class="settle-item">
+            <div class="settle-date-lbl">📅 ${ds}</div>
+            <div class="settle-info">
+              <div class="settle-brand">${b.brand_name}</div>
+              <div class="settle-member">${b.member_name}</div>
+            </div>
+            <div class="settle-amount">${b.settlement_amount ? b.settlement_amount.toLocaleString('ko-KR')+'원' : '-'}</div>
+          </div>`;
+        }).join('') + `<div class="settle-total-row">
+          <span class="settle-total-lbl">이달 정산 총액</span>
+          <span class="settle-total-val">${mTotal.toLocaleString('ko-KR')}원</span>
+        </div>`;
+      }
+
+      // ── 캘린더
+      renderCalendar();
+
+      // ── 팀원별 현황
+      renderMembers(filtered, yy, mm);
+    }
+
+    // ── 캘린더 렌더 ─────────────────────────────────────────
+    function buildTasksByDate() {
+      const map = {};
+      allBrands.forEach(b => {
+        const color = MEMBER_COLORS[b.member_name] || '#7c6af7';
+        const cls = MEMBER_CLS[b.member_name] || 'c1';
+        const tasks = b.op_tasks || [];
+        tasks.forEach(task => {
+          if (task.task_date) {
+            if (!map[task.task_date]) map[task.task_date] = [];
+            const def = TASKS.find(t => t.key === task.task_key);
+            map[task.task_date].push({ memberName:b.member_name, brandName:b.brand_name, label:def?.label||task.task_key, isDone:task.is_completed, color, cls });
+          }
+        });
+        if (b.settlement_date) {
+          if (!map[b.settlement_date]) map[b.settlement_date] = [];
+          map[b.settlement_date].push({ memberName:b.member_name, brandName:b.brand_name, label:'정산', isDone:true, color:'#5eead4', cls, isSettle:true });
+        }
+      });
+      return map;
+    }
+
+    function renderCalendar() {
+      const map = buildTasksByDate();
+      const today = new Date();
+      const firstDay = new Date(calYear, calMonth, 1).getDay();
+      const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+      document.getElementById('calMonthLbl').textContent = `${calYear}년 ${calMonth+1}월`;
+
+      const dayNames = ['일','월','화','수','목','금','토'];
+      let html = dayNames.map(d => `<div class="cal-dayname">${d}</div>`).join('');
+      for (let i = 0; i < firstDay; i++) html += '<div class="cal-day-empty"></div>';
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const items = map[dateStr] || [];
+        const isToday = d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
+        const dow = new Date(calYear, calMonth, d).getDay();
+        const isSel = dateStr === selectedDate;
+        const dotsHtml = items.slice(0,5).map(it => `<div class="cal-dot" style="background:${it.color}"></div>`).join('');
+        html += `<div class="cal-day ${isToday?'today':''} ${dow===0?'sun':dow===6?'sat':''} ${isSel?'selected':''}" data-date="${dateStr}">
+          <div class="day-num">${d}</div>
+          ${items.length > 0 ? `<div class="cal-dots">${dotsHtml}${items.length>5?'<div style="font-size:9px;color:var(--muted)">+${items.length-5}</div>':''}</div>` : ''}
+        </div>`;
+      }
+      document.getElementById('calGrid').innerHTML = html;
+      document.querySelectorAll('.cal-day[data-date]').forEach(el => {
+        el.addEventListener('click', () => selectDate(el.dataset.date, map));
+      });
+      if (selectedDate) selectDate(selectedDate, map);
+    }
+
+    function selectDate(dateStr, map) {
+      selectedDate = dateStr;
+      renderCalendar();
+      const items = (map || buildTasksByDate())[dateStr] || [];
+      const detail = document.getElementById('calDetail');
+      if (!items.length) { detail.className = 'cal-detail'; return; }
+      const d = new Date(dateStr);
+      const label = d.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'});
+      detail.innerHTML = `
+        <div class="cal-detail-title">📅 ${label} · ${items.length}건</div>
+        <div class="cal-detail-items">
+          ${items.map(it => `
+            <div class="cd-item">
+              <div class="cd-avatar ${it.cls}">${it.memberName[1]}</div>
+              <div class="cd-info">
+                <div class="cd-brand">${it.memberName} · ${it.brandName}</div>
+                <div class="cd-label">${it.label}</div>
+              </div>
+              <div class="cd-check ${it.isDone?'done':''}"></div>
+            </div>`).join('')}
+        </div>`;
+      detail.className = 'cal-detail show';
+    }
+
+    document.getElementById('calPrev').addEventListener('click', () => {
+      calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+      selectedDate = null; renderCalendar();
+    });
+    document.getElementById('calNext').addEventListener('click', () => {
+      calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+      selectedDate = null; renderCalendar();
+    });
+
+    // ── 팀원별 현황 ─────────────────────────────────────────
+    function renderMembers(filtered, yy, mm) {
       const wrap = document.getElementById('membersWrap');
       wrap.innerHTML = '';
-
       MEMBERS.forEach(member => {
         const brands = filtered.filter(b => b.member_name === member.name);
         let mDone = 0, mTot = 0;
@@ -276,8 +465,6 @@
         });
         const mPct = mTot > 0 ? Math.round((mDone/mTot)*100) : 0;
         const rateClass = mPct >= 80 ? 'rg' : mPct >= 40 ? 'ry' : 'rr';
-
-        // 이달 정산 (이 팀원)
         const myM = brands.filter(b => {
           if (!b.settlement_date) return false;
           const d = new Date(b.settlement_date);
@@ -296,34 +483,19 @@
             const bPct = Math.round((bDone/TASKS.length)*100);
             const dotColor = bPct === 100 ? '#22c55e' : bPct > 0 ? '#f59e0b' : '#6b6b80';
             const typeCls = TYPE_MAP[b.brand_type] || 'tb-out';
-
-            const dots = TASKS.map(t =>
-              `<div class="tp-dot ${isDone(tasks,t.key)?'done':'todo'}" title="${t.label}"></div>`
-            ).join('');
-
+            const dots = TASKS.map(t => `<div class="tp-dot ${isDone(tasks,t.key)?'done':'todo'}" title="${t.label}"></div>`).join('');
             const settleHtml = b.settlement_date
-              ? `<div class="settle-date">📅 ${new Date(b.settlement_date).toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'})}</div>
-                 <div class="settle-amt">${b.settlement_amount ? b.settlement_amount.toLocaleString('ko-KR')+'원' : '-'}</div>`
-              : `<div class="settle-none">미입력</div>`;
-
-            const contractHtml = b.contract_amount
-              ? `<div class="contract-amt">${b.contract_amount.toLocaleString('ko-KR')}원</div>`
-              : `<div class="contract-none">-</div>`;
-
-            rowsHtml += `
-              <tr>
-                <td><div class="brand-cell"><div class="bdot" style="background:${dotColor}"></div>${b.brand_name}</div></td>
-                <td><span class="tbadge ${typeCls}">${b.brand_type||'아웃바운드'}</span></td>
-                <td>${contractHtml}</td>
-                <td><div class="task-progress">${dots}</div></td>
-                <td><div class="settle-cell">${settleHtml}</div></td>
-                <td>
-                  <div class="pbar-wrap">
-                    <div class="pbar-bg"><div class="pbar-fill" style="width:${bPct}%"></div></div>
-                    <div class="pbar-txt">${bDone}/${TASKS.length} · ${bPct}%</div>
-                  </div>
-                </td>
-              </tr>`;
+              ? `<div class="sd">📅 ${new Date(b.settlement_date).toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'})}</div><div class="sa">${b.settlement_amount?b.settlement_amount.toLocaleString('ko-KR')+'원':'-'}</div>`
+              : `<div class="sn">미입력</div>`;
+            const contractHtml = b.contract_amount ? `<div class="ca">${b.contract_amount.toLocaleString('ko-KR')}원</div>` : `<div class="cn">-</div>`;
+            rowsHtml += `<tr>
+              <td><div class="brand-cell"><div class="bdot" style="background:${dotColor}"></div>${b.brand_name}</div></td>
+              <td><span class="tbadge ${typeCls}">${b.brand_type||'아웃바운드'}</span></td>
+              <td>${contractHtml}</td>
+              <td><div class="task-progress">${dots}</div></td>
+              <td><div class="settle-cell">${settleHtml}</div></td>
+              <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:${bPct}%"></div></div><div class="pbar-txt">${bDone}/${TASKS.length} · ${bPct}%</div></div></td>
+            </tr>`;
           });
         }
 
@@ -334,18 +506,13 @@
             <div class="mavatar ${member.cls}">${member.name[1]}</div>
             <div>
               <div class="mname">${member.name}</div>
-              <div class="mstats">브랜드 ${brands.length}개 · ${myM.length > 0 ? myAmt.toLocaleString('ko-KR')+'원 (이달)' : '이달 정산 없음'}</div>
+              <div class="mstats">브랜드 ${brands.length}개 · ${myM.length>0?myAmt.toLocaleString('ko-KR')+'원 (이달)':'이달 정산 없음'}</div>
             </div>
             <div class="mrate ${rateClass}">${mPct}%</div>
             <a class="mlink" href="/member/?name=${encodeURIComponent(member.name)}" target="_blank">바로가기 →</a>
           </div>
           <table class="btable">
-            <thead>
-              <tr>
-                <th>브랜드</th><th>유형</th><th>수주금액</th>
-                <th>진행 현황</th><th>정산</th><th>완료율</th>
-              </tr>
-            </thead>
+            <thead><tr><th>브랜드</th><th>유형</th><th>수주금액</th><th>진행 현황</th><th>정산</th><th>완료율</th></tr></thead>
             <tbody>${rowsHtml}</tbody>
           </table>`;
         wrap.appendChild(sec);
