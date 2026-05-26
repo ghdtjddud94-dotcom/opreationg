@@ -8,144 +8,157 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0a0a0f; --surface: #13131a; --card: #1a1a26; --card2: #1e1e2e;
+      --bg: #0a0a0f; --card: #1a1a26; --card2: #1e1e2e;
       --border: rgba(255,255,255,0.07); --accent: #7c6af7; --accent2: #5eead4;
       --text: #f0f0f8; --muted: #6b6b80;
       --success: #22c55e; --warn: #f59e0b; --danger: #ef4444;
     }
-    body { font-family: 'Pretendard','Apple SD Gothic Neo',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 60px; }
-    .glow-bg { position: fixed; top: -200px; left: 50%; transform: translateX(-50%); width: 900px; height: 500px; background: radial-gradient(ellipse, rgba(124,106,247,0.12) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+    body { font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding-bottom:60px; }
+    .glow { position:fixed; top:-200px; left:50%; transform:translateX(-50%); width:900px; height:500px; background:radial-gradient(ellipse,rgba(124,106,247,0.11) 0%,transparent 70%); pointer-events:none; z-index:0; }
 
     /* 헤더 */
-    header { position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 28px; height: 64px; display: flex; align-items: center; gap: 16px; }
-    .header-title { font-size: 18px; font-weight: 700; }
-    .header-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
-    .header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-    .refresh-btn { padding: 8px 16px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.2s; }
-    .refresh-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
-    .last-update { font-size: 11px; color: var(--muted); }
+    header { position:sticky; top:0; z-index:100; background:rgba(10,10,15,0.9); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 24px; height:64px; display:flex; align-items:center; gap:14px; }
+    .htitle { font-size:18px; font-weight:700; }
+    .hsub { font-size:12px; color:var(--muted); margin-top:1px; }
+    .hright { margin-left:auto; display:flex; align-items:center; gap:10px; }
+    .refresh-btn { padding:8px 14px; background:rgba(255,255,255,0.06); border:1px solid var(--border); border-radius:10px; color:var(--muted); font-size:13px; font-weight:500; cursor:pointer; font-family:inherit; transition:all 0.2s; }
+    .refresh-btn:hover { color:var(--text); border-color:rgba(255,255,255,0.15); }
+    .lupdate { font-size:11px; color:var(--muted); }
 
     /* 메인 */
-    .main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 28px 24px 0; }
+    .main { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:26px 20px 0; }
+    .sec-title { font-size:11px; font-weight:600; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:12px; }
 
-    /* 섹션 타이틀 */
-    .section-title { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
-
-    /* 요약 카드 그리드 */
-    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
-    .summary-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; }
-    .summary-card .sc-label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
-    .summary-card .sc-value { font-size: 26px; font-weight: 800; }
-    .summary-card .sc-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
-    .c-purple .sc-value { color: var(--accent); }
-    .c-green  .sc-value { color: var(--success); }
-    .c-yellow .sc-value { color: var(--warn); }
-    .c-teal   .sc-value { color: var(--accent2); }
-    .c-red    .sc-value { color: var(--danger); }
+    /* 요약 카드 */
+    .sum-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin-bottom:22px; }
+    .sc { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+    .sc .sl { font-size:11px; color:var(--muted); margin-bottom:7px; }
+    .sc .sv { font-size:24px; font-weight:800; }
+    .sc .ss { font-size:11px; color:var(--muted); margin-top:3px; }
+    .cp .sv { color:var(--accent); }
+    .cg .sv { color:var(--success); }
+    .cy .sv { color:var(--warn); }
+    .ct .sv { color:var(--accent2); }
 
     /* 이달 정산 하이라이트 */
-    .settlement-highlight { background: linear-gradient(135deg, rgba(94,234,212,0.08), rgba(124,106,247,0.08)); border: 1px solid rgba(94,234,212,0.2); border-radius: 18px; padding: 20px 24px; margin-bottom: 28px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-    .sh-icon { font-size: 32px; }
-    .sh-info { flex: 1; }
-    .sh-title { font-size: 13px; font-weight: 600; color: var(--accent2); margin-bottom: 2px; }
-    .sh-month { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
-    .sh-stats { display: flex; gap: 32px; flex-wrap: wrap; }
-    .sh-stat .label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-    .sh-stat .value { font-size: 22px; font-weight: 800; color: var(--accent2); }
-    .sh-stat .value.count { color: var(--accent); }
+    .settle-hl { background:linear-gradient(135deg,rgba(94,234,212,0.08),rgba(124,106,247,0.07)); border:1px solid rgba(94,234,212,0.18); border-radius:16px; padding:18px 22px; margin-bottom:26px; display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; }
+    .sh-icon { font-size:28px; margin-top:2px; }
+    .sh-body { flex:1; min-width:200px; }
+    .sh-title { font-size:13px; font-weight:700; color:var(--accent2); margin-bottom:2px; }
+    .sh-sub { font-size:12px; color:var(--muted); margin-bottom:12px; }
+    .sh-nums { display:flex; gap:28px; flex-wrap:wrap; }
+    .sh-num .nl { font-size:11px; color:var(--muted); margin-bottom:3px; }
+    .sh-num .nv { font-size:21px; font-weight:800; }
+    .nv-count { color:var(--accent); }
+    .nv-total { color:var(--accent2); }
+    .sh-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+    .sh-chip { padding:4px 11px; background:rgba(94,234,212,0.1); border:1px solid rgba(94,234,212,0.18); border-radius:100px; font-size:12px; color:var(--accent2); }
+    .sh-chip span { color:var(--muted); font-size:11px; margin-left:3px; }
 
-    /* 이달 정산 브랜드 목록 */
-    .month-brands { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-    .month-brand-chip { padding: 5px 12px; background: rgba(94,234,212,0.1); border: 1px solid rgba(94,234,212,0.2); border-radius: 100px; font-size: 12px; color: var(--accent2); }
-    .month-brand-chip .chip-member { color: var(--muted); margin-left: 4px; font-size: 11px; }
+    /* 수주 유형 필터 */
+    .filter-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; }
+    .filter-btn { padding:5px 13px; border-radius:100px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:12px; font-weight:500; cursor:pointer; font-family:inherit; transition:all 0.2s; }
+    .filter-btn.active { background:rgba(124,106,247,0.15); border-color:rgba(124,106,247,0.4); color:var(--text); }
 
     /* 팀원 섹션 */
-    .members-wrap { display: flex; flex-direction: column; gap: 20px; }
-    .member-section { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
-    .member-section-header { padding: 16px 22px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
-    .member-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
-    .c1 { background: rgba(239,68,68,0.2);   color: #f87171; }
-    .c2 { background: rgba(234,179,8,0.2);   color: #fbbf24; }
-    .c3 { background: rgba(34,197,94,0.2);   color: #4ade80; }
-    .c4 { background: rgba(59,130,246,0.2);  color: #60a5fa; }
-    .c5 { background: rgba(168,85,247,0.2);  color: #c084fc; }
-    .member-section-header .name { font-size: 16px; font-weight: 700; }
-    .member-section-header .stats { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .member-link { margin-left: auto; padding: 6px 12px; background: rgba(124,106,247,0.12); border: 1px solid rgba(124,106,247,0.25); border-radius: 8px; color: var(--accent); font-size: 12px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
-    .member-link:hover { background: rgba(124,106,247,0.2); }
-    .member-rate { font-size: 20px; font-weight: 800; margin-right: 8px; }
-    .rate-good { color: var(--success); }
-    .rate-mid  { color: var(--warn); }
-    .rate-low  { color: var(--danger); }
+    .members-wrap { display:flex; flex-direction:column; gap:18px; }
+    .member-sec { background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden; }
+    .msec-header { padding:15px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border); }
+    .mavatar { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; flex-shrink:0; }
+    .c1{background:rgba(239,68,68,0.2);color:#f87171;}
+    .c2{background:rgba(234,179,8,0.2);color:#fbbf24;}
+    .c3{background:rgba(34,197,94,0.2);color:#4ade80;}
+    .c4{background:rgba(59,130,246,0.2);color:#60a5fa;}
+    .c5{background:rgba(168,85,247,0.2);color:#c084fc;}
+    .msec-header .mname { font-size:15px; font-weight:700; }
+    .msec-header .mstats { font-size:12px; color:var(--muted); margin-top:2px; }
+    .mrate { font-size:19px; font-weight:800; margin-right:4px; }
+    .rg{color:var(--success);} .ry{color:var(--warn);} .rr{color:var(--danger);}
+    .mlink { margin-left:auto; padding:5px 11px; background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.22); border-radius:7px; color:var(--accent); font-size:12px; font-weight:600; text-decoration:none; transition:all 0.2s; white-space:nowrap; }
+    .mlink:hover { background:rgba(124,106,247,0.2); }
 
     /* 브랜드 테이블 */
-    .brand-table { width: 100%; border-collapse: collapse; }
-    .brand-table th { padding: 9px 14px; font-size: 11px; font-weight: 600; color: var(--muted); text-align: left; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); }
-    .brand-table td { padding: 13px 14px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
-    .brand-table tr:last-child td { border-bottom: none; }
-    .brand-table tr:hover td { background: rgba(255,255,255,0.02); }
-    .brand-name-cell { font-weight: 600; display: flex; align-items: center; gap: 8px; }
-    .brand-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .btable { width:100%; border-collapse:collapse; }
+    .btable th { padding:8px 14px; font-size:11px; font-weight:600; color:var(--muted); text-align:left; border-bottom:1px solid var(--border); background:rgba(255,255,255,0.02); }
+    .btable td { padding:12px 14px; font-size:13px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
+    .btable tr:last-child td { border-bottom:none; }
+    .btable tr:hover td { background:rgba(255,255,255,0.02); }
 
-    /* 체크 칩 */
-    .task-checks { display: flex; gap: 4px; flex-wrap: wrap; }
-    .task-chip { padding: 3px 8px; border-radius: 100px; font-size: 11px; font-weight: 500; }
-    .task-chip.done { background: rgba(34,197,94,0.15); color: #4ade80; }
-    .task-chip.todo { background: rgba(255,255,255,0.05); color: var(--muted); }
+    .brand-cell { display:flex; align-items:center; gap:8px; font-weight:600; }
+    .bdot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
 
-    /* 진행률 */
-    .progress-cell { min-width: 100px; }
-    .mini-bar-bg { height: 5px; border-radius: 100px; background: rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 4px; }
-    .mini-bar-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
-    .mini-bar-text { font-size: 11px; color: var(--muted); }
+    /* 유형 뱃지 */
+    .tbadge { padding:2px 8px; border-radius:100px; font-size:11px; font-weight:600; }
+    .tb-out{background:rgba(239,68,68,0.15);color:#f87171;}
+    .tb-in{background:rgba(59,130,246,0.15);color:#60a5fa;}
+    .tb-ref{background:rgba(234,179,8,0.15);color:#fbbf24;}
+    .tb-renew{background:rgba(34,197,94,0.15);color:#4ade80;}
+
+    /* 태스크 진행 */
+    .task-progress { display:flex; gap:3px; flex-wrap:wrap; }
+    .tp-dot { width:10px; height:10px; border-radius:3px; }
+    .tp-dot.done { background:var(--success); }
+    .tp-dot.todo { background:rgba(255,255,255,0.1); }
+
+    /* 진행률 바 */
+    .pbar-wrap { min-width:90px; }
+    .pbar-bg { height:5px; border-radius:100px; background:rgba(255,255,255,0.06); overflow:hidden; margin-bottom:3px; }
+    .pbar-fill { height:100%; border-radius:100px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+    .pbar-txt { font-size:11px; color:var(--muted); }
 
     /* 정산 셀 */
-    .settlement-cell { font-size: 12px; }
-    .settle-date { color: var(--accent2); font-weight: 600; }
-    .settle-amount { color: var(--text); margin-top: 2px; }
-    .settle-none { color: var(--muted); }
+    .settle-cell { font-size:12px; }
+    .settle-date { color:var(--accent2); font-weight:600; }
+    .settle-amt { color:var(--text); margin-top:1px; }
+    .settle-none { color:var(--muted); }
+
+    /* 수주금액 */
+    .contract-amt { font-size:12px; color:var(--accent); font-weight:600; }
+    .contract-none { color:var(--muted); font-size:12px; }
 
     /* 빈 행 */
-    .empty-row td { text-align: center; padding: 28px; color: var(--muted); font-size: 13px; }
+    .empty-row td { text-align:center; padding:24px; color:var(--muted); font-size:13px; }
 
     /* 로딩 */
-    .loading { text-align: center; padding: 80px 20px; color: var(--muted); }
-    .spinner { width: 36px; height: 36px; border: 3px solid rgba(124,106,247,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading { text-align:center; padding:72px 20px; color:var(--muted); }
+    .spinner { width:34px; height:34px; border:3px solid rgba(124,106,247,0.2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 14px; }
+    @keyframes spin { to{transform:rotate(360deg);} }
 
-    @media (max-width: 700px) {
-      .brand-table th:nth-child(3), .brand-table td:nth-child(3),
-      .brand-table th:nth-child(4), .brand-table td:nth-child(4) { display: none; }
+    @media (max-width:680px) {
+      .btable th:nth-child(4), .btable td:nth-child(4),
+      .btable th:nth-child(5), .btable td:nth-child(5) { display:none; }
     }
   </style>
 </head>
 <body>
-  <div class="glow-bg"></div>
-
+  <div class="glow"></div>
   <header>
     <div>
-      <div class="header-title">📊 어드민 대시보드</div>
-      <div class="header-sub">전체 팀원 업무 현황</div>
+      <div class="htitle">📊 어드민 대시보드</div>
+      <div class="hsub">전체 팀원 업무 현황</div>
     </div>
-    <div class="header-right">
-      <span class="last-update" id="lastUpdate"></span>
+    <div class="hright">
+      <span class="lupdate" id="lupdate"></span>
       <button class="refresh-btn" id="refreshBtn">↻ 새로고침</button>
     </div>
   </header>
 
   <div class="main">
-    <div class="loading" id="loadingEl"><div class="spinner"></div><div>데이터 불러오는 중...</div></div>
-
+    <div class="loading" id="loadingEl"><div class="spinner"></div><div>불러오는 중...</div></div>
     <div id="content" style="display:none">
-      <!-- 전체 요약 -->
-      <div class="section-title">전체 요약</div>
-      <div class="summary-grid" id="summaryGrid"></div>
+      <div class="sec-title">전체 요약</div>
+      <div class="sum-grid" id="sumGrid"></div>
 
-      <!-- 이달 정산 하이라이트 -->
-      <div class="settlement-highlight" id="settlementHighlight"></div>
+      <div class="settle-hl" id="settleHl"></div>
 
-      <!-- 팀원별 현황 -->
-      <div class="section-title">팀원별 현황</div>
+      <div class="sec-title" style="margin-top:4px">팀원별 현황</div>
+      <div class="filter-row" id="filterRow">
+        <button class="filter-btn active" data-f="전체">전체</button>
+        <button class="filter-btn" data-f="아웃바운드">아웃바운드</button>
+        <button class="filter-btn" data-f="인바운드">인바운드</button>
+        <button class="filter-btn" data-f="소개건">소개건</button>
+        <button class="filter-btn" data-f="연장">연장</button>
+      </div>
       <div class="members-wrap" id="membersWrap"></div>
     </div>
   </div>
@@ -158,184 +171,156 @@
     );
 
     const MEMBERS = [
-      { name:'김병찬', cls:'c1' },
-      { name:'김요엘',  cls:'c2' },
-      { name:'최진유', cls:'c3' },
-      { name:'강사랑', cls:'c4' },
-      { name:'신예지', cls:'c5' },
+      {name:'김병찬',cls:'c1'},{name:'김요엘',cls:'c2'},{name:'최진유',cls:'c3'},
+      {name:'강사랑',cls:'c4'},{name:'신예지',cls:'c5'},
     ];
-    const PRE_TASKS  = [
-      { key:'meeting_material', label:'미팅자료' },
-      { key:'proposal',         label:'실행안/제안서' },
+    const TASKS = [
+      {key:'meeting_prep',  label:'미팅자료준비'},
+      {key:'meeting',       label:'미팅'},
+      {key:'proposal',      label:'실행안/제안서'},
+      {key:'google_sheet',  label:'구글시트 생성'},
+      {key:'vendor_upload', label:'업체 업로드'},
+      {key:'quotation',     label:'견적서'},
+      {key:'contract',      label:'계약서'},
+      {key:'invoice',       label:'계산서 발행'},
+      {key:'kickoff',       label:'킥오프미팅'},
+      {key:'review_meeting',label:'리뷰미팅'},
+      {key:'settlement',    label:'정산일자'},
     ];
-    const POST_TASKS = [
-      { key:'google_sheet',  label:'구글시트' },
-      { key:'vendor_upload', label:'업체 업로드' },
-      { key:'quotation',     label:'견적서' },
-      { key:'invoice',       label:'계산서' },
-      { key:'settlement',    label:'정산 일정' },
-    ];
-    const ALL_TASKS = [
-      ...PRE_TASKS.map(t=>({...t,stage:'pre'})),
-      ...POST_TASKS.map(t=>({...t,stage:'post'}))
-    ];
+    const TYPE_MAP = {'아웃바운드':'tb-out','인바운드':'tb-in','소개건':'tb-ref','연장':'tb-renew'};
 
-    async function loadData() {
+    let allBrands = [];
+    let activeFilter = '전체';
+
+    async function load() {
       document.getElementById('loadingEl').style.display = 'block';
       document.getElementById('content').style.display = 'none';
-
       const { data, error } = await sb
-        .from('op_brands')
-        .select('*, op_tasks(*)')
+        .from('op_brands').select('*, op_tasks(*)')
         .order('created_at', { ascending: true });
-
       document.getElementById('loadingEl').style.display = 'none';
-      if (error) { alert('데이터 로드 실패: ' + error.message); return; }
-
-      render(data || []);
-      document.getElementById('lastUpdate').textContent =
-        new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'}) + ' 기준';
+      if (error) { alert('로드 실패: ' + error.message); return; }
+      allBrands = data || [];
+      render();
+      document.getElementById('lupdate').textContent =
+        new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}) + ' 기준';
       document.getElementById('content').style.display = 'block';
     }
 
-    function taskDone(tasks, stage, key) {
-      return tasks.some(t => t.stage === stage && t.task_key === key && t.is_completed);
+    function isDone(tasks, key) {
+      return tasks.some(t => t.task_key === key && t.is_completed);
     }
 
-    function render(allBrands) {
+    function render() {
       const now = new Date();
-      const thisYear = now.getFullYear(), thisMonth = now.getMonth();
+      const yy = now.getFullYear(), mm = now.getMonth();
 
-      // ── 전체 통계
-      let totalDone = 0, totalTasks = 0;
-      allBrands.forEach(b => {
+      const filtered = activeFilter === '전체'
+        ? allBrands
+        : allBrands.filter(b => b.brand_type === activeFilter);
+
+      // 전체 통계
+      let tDone = 0, tTotal = 0;
+      filtered.forEach(b => {
         const tasks = b.op_tasks || [];
-        ALL_TASKS.forEach(t => {
-          totalTasks++;
-          if (taskDone(tasks, t.stage, t.key)) totalDone++;
-        });
+        TASKS.forEach(t => { tTotal++; if (isDone(tasks, t.key)) tDone++; });
       });
-      const completedBrands = allBrands.filter(b => {
+      const completed = filtered.filter(b => {
         const tasks = b.op_tasks || [];
-        return ALL_TASKS.every(t => taskDone(tasks, t.stage, t.key));
+        return TASKS.every(t => isDone(tasks, t.key));
       }).length;
-      const overallPct = totalTasks > 0 ? Math.round((totalDone/totalTasks)*100) : 0;
+      const overallPct = tTotal > 0 ? Math.round((tDone/tTotal)*100) : 0;
 
-      // ── 이달 정산
-      const monthBrands = allBrands.filter(b => {
+      // 이달 정산
+      const mBrands = filtered.filter(b => {
         if (!b.settlement_date) return false;
         const d = new Date(b.settlement_date);
-        return d.getFullYear() === thisYear && d.getMonth() === thisMonth;
+        return d.getFullYear() === yy && d.getMonth() === mm;
       });
-      const monthTotal = monthBrands.reduce((s,b) => s + (b.settlement_amount||0), 0);
-      const monthCount = monthBrands.length;
+      const mTotal = mBrands.reduce((s,b) => s + (b.settlement_amount||0), 0);
 
-      // ── 요약 카드
-      document.getElementById('summaryGrid').innerHTML = `
-        <div class="summary-card c-purple">
-          <div class="sc-label">전체 담당 브랜드</div>
-          <div class="sc-value">${allBrands.length}</div>
-          <div class="sc-sub">팀 전체 합산</div>
-        </div>
-        <div class="summary-card c-green">
-          <div class="sc-label">완전 완료</div>
-          <div class="sc-value">${completedBrands}</div>
-          <div class="sc-sub">모든 항목 체크 완료</div>
-        </div>
-        <div class="summary-card c-yellow">
-          <div class="sc-label">진행 중</div>
-          <div class="sc-value">${allBrands.length - completedBrands}</div>
-          <div class="sc-sub">미완료 항목 있음</div>
-        </div>
-        <div class="summary-card c-teal">
-          <div class="sc-label">전체 완료율</div>
-          <div class="sc-value">${overallPct}%</div>
-          <div class="sc-sub">${totalDone}/${totalTasks} 항목</div>
-        </div>
+      // 요약 카드
+      document.getElementById('sumGrid').innerHTML = `
+        <div class="sc cp"><div class="sl">전체 브랜드</div><div class="sv">${filtered.length}</div><div class="ss">팀 합산</div></div>
+        <div class="sc cg"><div class="sl">완전 완료</div><div class="sv">${completed}</div><div class="ss">모든 항목 체크</div></div>
+        <div class="sc cy"><div class="sl">진행 중</div><div class="sv">${filtered.length-completed}</div><div class="ss">미완료 있음</div></div>
+        <div class="sc ct"><div class="sl">전체 완료율</div><div class="sv">${overallPct}%</div><div class="ss">${tDone}/${tTotal}</div></div>
       `;
 
-      // ── 이달 정산 하이라이트
-      const monthLabel = `${now.getMonth()+1}월`;
-      const chipHtml = monthBrands.map(b =>
-        `<div class="month-brand-chip">${b.brand_name} <span class="chip-member">${b.member_name}</span></div>`
-      ).join('');
-      document.getElementById('settlementHighlight').innerHTML = `
+      // 이달 정산 하이라이트
+      const chipHtml = mBrands.map(b =>
+        `<div class="sh-chip">${b.brand_name}<span>${b.member_name}</span></div>`).join('');
+      document.getElementById('settleHl').innerHTML = `
         <div class="sh-icon">💰</div>
-        <div class="sh-info">
-          <div class="sh-title">${monthLabel} 정산 현황</div>
-          <div class="sh-month">${now.getFullYear()}년 ${monthLabel} 기준</div>
-          <div class="sh-stats">
-            <div class="sh-stat">
-              <div class="label">정산 건수</div>
-              <div class="value count">${monthCount}건</div>
-            </div>
-            <div class="sh-stat">
-              <div class="label">정산 총액</div>
-              <div class="value">${monthTotal.toLocaleString('ko-KR')}원</div>
-            </div>
+        <div class="sh-body">
+          <div class="sh-title">${now.getMonth()+1}월 정산 현황</div>
+          <div class="sh-sub">${yy}년 ${now.getMonth()+1}월 기준 · 30초마다 자동 갱신</div>
+          <div class="sh-nums">
+            <div class="sh-num"><div class="nl">정산 건수</div><div class="nv nv-count">${mBrands.length}건</div></div>
+            <div class="sh-num"><div class="nl">정산 총액</div><div class="nv nv-total">${mTotal.toLocaleString('ko-KR')}원</div></div>
           </div>
-          ${monthBrands.length > 0 ? `<div class="month-brands">${chipHtml}</div>` : ''}
+          ${mBrands.length > 0 ? `<div class="sh-chips">${chipHtml}</div>` : ''}
         </div>
       `;
 
-      // ── 팀원별
+      // 팀원별
       const wrap = document.getElementById('membersWrap');
       wrap.innerHTML = '';
 
       MEMBERS.forEach(member => {
-        const brands = allBrands.filter(b => b.member_name === member.name);
-        let mDone = 0, mTotal = 0;
+        const brands = filtered.filter(b => b.member_name === member.name);
+        let mDone = 0, mTot = 0;
         brands.forEach(b => {
           const tasks = b.op_tasks || [];
-          ALL_TASKS.forEach(t => {
-            mTotal++;
-            if (taskDone(tasks, t.stage, t.key)) mDone++;
-          });
+          TASKS.forEach(t => { mTot++; if (isDone(tasks, t.key)) mDone++; });
         });
-        const mPct = mTotal > 0 ? Math.round((mDone/mTotal)*100) : 0;
-        const rateClass = mPct >= 80 ? 'rate-good' : mPct >= 40 ? 'rate-mid' : 'rate-low';
+        const mPct = mTot > 0 ? Math.round((mDone/mTot)*100) : 0;
+        const rateClass = mPct >= 80 ? 'rg' : mPct >= 40 ? 'ry' : 'rr';
 
-        // 이달 정산 (이 팀원의)
-        const myMonthBrands = brands.filter(b => {
+        // 이달 정산 (이 팀원)
+        const myM = brands.filter(b => {
           if (!b.settlement_date) return false;
           const d = new Date(b.settlement_date);
-          return d.getFullYear() === thisYear && d.getMonth() === thisMonth;
+          return d.getFullYear() === yy && d.getMonth() === mm;
         });
-        const myMonthAmt = myMonthBrands.reduce((s,b) => s + (b.settlement_amount||0), 0);
+        const myAmt = myM.reduce((s,b) => s + (b.settlement_amount||0), 0);
 
-        let brandsHtml = '';
-        if (brands.length === 0) {
-          brandsHtml = `<tr class="empty-row"><td colspan="5">담당 브랜드 없음</td></tr>`;
+        let rowsHtml = '';
+        if (!brands.length) {
+          rowsHtml = `<tr class="empty-row"><td colspan="6">담당 브랜드 없음</td></tr>`;
         } else {
           brands.forEach(b => {
             const tasks = b.op_tasks || [];
             let bDone = 0;
-            ALL_TASKS.forEach(t => { if (taskDone(tasks, t.stage, t.key)) bDone++; });
-            const bPct = Math.round((bDone / ALL_TASKS.length) * 100);
+            TASKS.forEach(t => { if (isDone(tasks, t.key)) bDone++; });
+            const bPct = Math.round((bDone/TASKS.length)*100);
             const dotColor = bPct === 100 ? '#22c55e' : bPct > 0 ? '#f59e0b' : '#6b6b80';
+            const typeCls = TYPE_MAP[b.brand_type] || 'tb-out';
 
-            const preChips = PRE_TASKS.map(t =>
-              `<span class="task-chip ${taskDone(tasks,'pre',t.key)?'done':'todo'}">${t.label}</span>`
-            ).join('');
-            const postChips = POST_TASKS.map(t =>
-              `<span class="task-chip ${taskDone(tasks,'post',t.key)?'done':'todo'}">${t.label}</span>`
+            const dots = TASKS.map(t =>
+              `<div class="tp-dot ${isDone(tasks,t.key)?'done':'todo'}" title="${t.label}"></div>`
             ).join('');
 
             const settleHtml = b.settlement_date
               ? `<div class="settle-date">📅 ${new Date(b.settlement_date).toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'})}</div>
-                 <div class="settle-amount">${b.settlement_amount ? b.settlement_amount.toLocaleString('ko-KR')+'원' : '-'}</div>`
+                 <div class="settle-amt">${b.settlement_amount ? b.settlement_amount.toLocaleString('ko-KR')+'원' : '-'}</div>`
               : `<div class="settle-none">미입력</div>`;
 
-            brandsHtml += `
+            const contractHtml = b.contract_amount
+              ? `<div class="contract-amt">${b.contract_amount.toLocaleString('ko-KR')}원</div>`
+              : `<div class="contract-none">-</div>`;
+
+            rowsHtml += `
               <tr>
-                <td><div class="brand-name-cell"><div class="brand-dot" style="background:${dotColor}"></div>${b.brand_name}</div></td>
-                <td><div class="task-checks">${preChips}</div></td>
-                <td><div class="task-checks">${postChips}</div></td>
-                <td><div class="settlement-cell">${settleHtml}</div></td>
+                <td><div class="brand-cell"><div class="bdot" style="background:${dotColor}"></div>${b.brand_name}</div></td>
+                <td><span class="tbadge ${typeCls}">${b.brand_type||'아웃바운드'}</span></td>
+                <td>${contractHtml}</td>
+                <td><div class="task-progress">${dots}</div></td>
+                <td><div class="settle-cell">${settleHtml}</div></td>
                 <td>
-                  <div class="progress-cell">
-                    <div class="mini-bar-bg"><div class="mini-bar-fill" style="width:${bPct}%"></div></div>
-                    <div class="mini-bar-text">${bDone}/${ALL_TASKS.length} · ${bPct}%</div>
+                  <div class="pbar-wrap">
+                    <div class="pbar-bg"><div class="pbar-fill" style="width:${bPct}%"></div></div>
+                    <div class="pbar-txt">${bDone}/${TASKS.length} · ${bPct}%</div>
                   </div>
                 </td>
               </tr>`;
@@ -343,36 +328,42 @@
         }
 
         const sec = document.createElement('div');
-        sec.className = 'member-section';
+        sec.className = 'member-sec';
         sec.innerHTML = `
-          <div class="member-section-header">
-            <div class="member-avatar ${member.cls}">${member.name[1]}</div>
+          <div class="msec-header">
+            <div class="mavatar ${member.cls}">${member.name[1]}</div>
             <div>
-              <div class="name">${member.name}</div>
-              <div class="stats">브랜드 ${brands.length}개 · ${myMonthBrands.length > 0 ? `${myMonthAmt.toLocaleString('ko-KR')}원 (이달)` : '이달 정산 없음'}</div>
+              <div class="mname">${member.name}</div>
+              <div class="mstats">브랜드 ${brands.length}개 · ${myM.length > 0 ? myAmt.toLocaleString('ko-KR')+'원 (이달)' : '이달 정산 없음'}</div>
             </div>
-            <div class="member-rate ${rateClass}">${mPct}%</div>
-            <a class="member-link" href="/member/?name=${encodeURIComponent(member.name)}" target="_blank">바로가기 →</a>
+            <div class="mrate ${rateClass}">${mPct}%</div>
+            <a class="mlink" href="/member/?name=${encodeURIComponent(member.name)}" target="_blank">바로가기 →</a>
           </div>
-          <table class="brand-table">
+          <table class="btable">
             <thead>
               <tr>
-                <th>브랜드</th>
-                <th>수주전</th>
-                <th>수주후</th>
-                <th>정산</th>
-                <th>완료율</th>
+                <th>브랜드</th><th>유형</th><th>수주금액</th>
+                <th>진행 현황</th><th>정산</th><th>완료율</th>
               </tr>
             </thead>
-            <tbody>${brandsHtml}</tbody>
+            <tbody>${rowsHtml}</tbody>
           </table>`;
         wrap.appendChild(sec);
       });
     }
 
-    document.getElementById('refreshBtn').addEventListener('click', loadData);
-    loadData();
-    setInterval(loadData, 30000); // 30초 자동 갱신
+    // 필터
+    document.getElementById('filterRow').addEventListener('click', e => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      activeFilter = btn.dataset.f;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.f === activeFilter));
+      render();
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', load);
+    load();
+    setInterval(load, 30000);
   </script>
 </body>
 </html>

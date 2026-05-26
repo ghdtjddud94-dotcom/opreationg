@@ -8,129 +8,143 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0a0a0f; --surface: #13131a; --card: #1a1a26; --card2: #1e1e2e;
+      --bg: #0a0a0f; --card: #1a1a26; --card2: #1e1e2e;
       --border: rgba(255,255,255,0.07); --accent: #7c6af7; --accent2: #5eead4;
-      --text: #f0f0f8; --muted: #6b6b80; --success: #22c55e;
-      --warn: #f59e0b; --danger: #ef4444;
+      --text: #f0f0f8; --muted: #6b6b80;
+      --success: #22c55e; --warn: #f59e0b; --danger: #ef4444;
     }
     body { font-family: 'Pretendard','Apple SD Gothic Neo',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
-    .glow-bg { position: fixed; top: -200px; left: 50%; transform: translateX(-50%); width: 800px; height: 500px; background: radial-gradient(ellipse, rgba(124,106,247,0.14) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+    .glow { position: fixed; top: -200px; left: 50%; transform: translateX(-50%); width: 800px; height: 500px; background: radial-gradient(ellipse, rgba(124,106,247,0.13) 0%, transparent 70%); pointer-events: none; z-index: 0; }
 
     /* 헤더 */
-    header { position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.88); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 24px; height: 64px; display: flex; align-items: center; gap: 16px; }
-    .back-btn { color: var(--muted); text-decoration: none; font-size: 22px; transition: color 0.2s; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.88); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 20px; height: 64px; display: flex; align-items: center; gap: 14px; }
+    .back-btn { color: var(--muted); text-decoration: none; font-size: 22px; }
     .back-btn:hover { color: var(--text); }
     .header-info { flex: 1; }
     .header-name { font-size: 18px; font-weight: 700; }
     .header-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
-    .add-brand-btn { padding: 9px 18px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; font-family: inherit; }
-    .add-brand-btn:hover { background: #6a58e0; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,106,247,0.35); }
+    .add-btn { padding: 9px 16px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; white-space: nowrap; }
+    .add-btn:hover { background: #6a58e0; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,106,247,0.35); }
 
     /* 이달 정산 배너 */
-    .settlement-banner { background: linear-gradient(135deg, rgba(124,106,247,0.12), rgba(94,234,212,0.08)); border: 1px solid rgba(124,106,247,0.2); border-radius: 16px; padding: 18px 22px; margin: 24px 20px 0; display: flex; gap: 24px; flex-wrap: wrap; }
-    .settlement-banner .s-item { display: flex; flex-direction: column; gap: 4px; }
-    .settlement-banner .s-label { font-size: 11px; color: var(--muted); font-weight: 500; }
-    .settlement-banner .s-value { font-size: 22px; font-weight: 800; }
-    .settlement-banner .s-value.amount { color: var(--accent2); }
-    .settlement-banner .s-value.count { color: var(--accent); }
+    .banner { background: linear-gradient(135deg, rgba(94,234,212,0.08), rgba(124,106,247,0.08)); border: 1px solid rgba(94,234,212,0.18); border-radius: 14px; padding: 14px 20px; margin: 20px 16px 0; display: flex; gap: 28px; flex-wrap: wrap; }
+    .banner-item .bl { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+    .banner-item .bv { font-size: 20px; font-weight: 800; }
+    .bv-teal { color: var(--accent2); }
+    .bv-purple { color: var(--accent); }
 
     /* 메인 */
-    .main { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 24px 20px 0; }
-    .empty-state { text-align: center; padding: 80px 20px; }
-    .empty-state .icon { font-size: 56px; margin-bottom: 16px; }
-    .empty-state h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-    .empty-state p { color: var(--muted); font-size: 15px; }
+    .main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 20px 16px 0; }
+
+    /* 빈 상태 */
+    .empty { text-align: center; padding: 72px 20px; }
+    .empty .ei { font-size: 52px; margin-bottom: 14px; }
+    .empty h2 { font-size: 19px; font-weight: 700; margin-bottom: 7px; }
+    .empty p { color: var(--muted); font-size: 14px; }
 
     /* 브랜드 카드 */
-    .brands-list { display: flex; flex-direction: column; gap: 16px; }
-    .brand-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; transition: border-color 0.2s; }
-    .brand-card:hover { border-color: rgba(124,106,247,0.25); }
-    .brand-header { padding: 20px 24px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
-    .brand-icon { width: 42px; height: 42px; border-radius: 10px; background: linear-gradient(135deg, rgba(124,106,247,0.25), rgba(94,234,212,0.15)); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-    .brand-meta { flex: 1; }
-    .brand-name { font-size: 16px; font-weight: 700; }
-    .brand-progress-text { font-size: 12px; color: var(--muted); margin-top: 3px; }
-    .brand-actions { display: flex; align-items: center; gap: 10px; }
-    .delete-btn { width: 28px; height: 28px; border-radius: 8px; background: transparent; border: 1px solid transparent; color: var(--muted); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-    .delete-btn:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: var(--danger); }
-    .chevron { color: var(--muted); font-size: 20px; transition: transform 0.3s; }
-    .brand-card.open .chevron { transform: rotate(90deg); }
-    .progress-bar-wrap { padding: 0 24px; }
-    .progress-bar-bg { height: 4px; border-radius: 100px; background: rgba(255,255,255,0.06); overflow: hidden; }
-    .progress-bar-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.5s ease; }
+    .brands { display: flex; flex-direction: column; gap: 14px; }
+    .brand-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; transition: border-color 0.2s; }
+    .brand-card:hover { border-color: rgba(124,106,247,0.22); }
 
-    /* 탭 */
-    .tabs-wrap { padding: 16px 24px 0; }
-    .tabs { display: flex; gap: 4px; background: rgba(255,255,255,0.04); border-radius: 12px; padding: 4px; }
-    .tab-btn { flex: 1; padding: 9px 0; border: none; border-radius: 9px; background: transparent; color: var(--muted); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; }
-    .tab-btn.active { background: var(--card2); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-    .tab-btn .tab-badge { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 100px; font-size: 11px; background: rgba(124,106,247,0.2); color: var(--accent); }
+    /* 카드 헤더 */
+    .card-header { padding: 18px 20px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+    .card-icon { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, rgba(124,106,247,0.2), rgba(94,234,212,0.12)); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .card-meta { flex: 1; min-width: 0; }
+    .card-name { font-size: 16px; font-weight: 700; }
+    .card-badges { display: flex; align-items: center; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+    .type-badge { padding: 2px 9px; border-radius: 100px; font-size: 11px; font-weight: 600; }
+    .tb-out  { background: rgba(239,68,68,0.15);  color: #f87171; }
+    .tb-in   { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .tb-ref  { background: rgba(234,179,8,0.15);  color: #fbbf24; }
+    .tb-renew{ background: rgba(34,197,94,0.15);  color: #4ade80; }
+    .amount-badge { padding: 2px 9px; border-radius: 100px; font-size: 11px; font-weight: 500; background: rgba(124,106,247,0.12); color: var(--accent); }
+    .progress-text { font-size: 11px; color: var(--muted); }
+    .card-actions { display: flex; align-items: center; gap: 8px; }
+    .del-btn { width: 26px; height: 26px; border-radius: 7px; border: 1px solid transparent; background: transparent; color: var(--muted); font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .del-btn:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: var(--danger); }
+    .chevron { color: var(--muted); font-size: 18px; transition: transform 0.3s; }
+    .brand-card.open .chevron { transform: rotate(90deg); }
+
+    /* 진행률 바 */
+    .prog-wrap { padding: 0 20px 2px; }
+    .prog-bg { height: 4px; border-radius: 100px; background: rgba(255,255,255,0.06); overflow: hidden; }
+    .prog-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.5s; }
 
     /* 체크리스트 */
-    .checklist-body { padding: 16px 24px 20px; display: none; }
-    .brand-card.open .checklist-body { display: block; }
-    .checklist-pane { display: none; }
-    .checklist-pane.active { display: block; }
-    .check-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 12px; margin-bottom: 6px; cursor: pointer; transition: background 0.15s; user-select: none; }
+    .checklist { padding: 12px 20px 18px; display: none; }
+    .brand-card.open .checklist { display: block; }
+
+    .check-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 11px; margin-bottom: 4px; cursor: pointer; transition: background 0.15s; user-select: none; }
     .check-item:hover { background: rgba(255,255,255,0.04); }
     .check-item:last-child { margin-bottom: 0; }
-    .checkbox { width: 22px; height: 22px; border-radius: 7px; border: 2px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+    .checkbox { width: 21px; height: 21px; border-radius: 7px; border: 2px solid rgba(255,255,255,0.14); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
     .check-item.checked .checkbox { background: var(--success); border-color: var(--success); }
-    .check-item.checked .checkbox::after { content: '✓'; color: #fff; font-size: 13px; font-weight: 700; }
-    .check-label { font-size: 15px; font-weight: 500; }
+    .check-item.checked .checkbox::after { content: '✓'; color: #fff; font-size: 12px; font-weight: 700; }
+    .check-num { font-size: 12px; color: var(--muted); width: 18px; text-align: right; flex-shrink: 0; }
+    .check-label { flex: 1; font-size: 15px; font-weight: 500; }
     .check-item.checked .check-label { color: var(--muted); text-decoration: line-through; }
-    .check-time { font-size: 11px; color: var(--muted); margin-left: auto; }
+    .check-time { font-size: 11px; color: var(--muted); }
 
-    /* 정산 아이템 특수 스타일 */
+    /* 정산 아이템 */
     .settlement-item { flex-direction: column; align-items: flex-start; cursor: default; }
     .settlement-item:hover { background: transparent; }
-    .settlement-item-top { display: flex; align-items: center; gap: 14px; width: 100%; cursor: pointer; }
-    .settlement-item-top:hover { background: rgba(255,255,255,0.03); border-radius: 8px; }
-    .settlement-detail { margin-top: 10px; padding: 14px 16px; background: rgba(94,234,212,0.06); border: 1px solid rgba(94,234,212,0.15); border-radius: 12px; width: 100%; display: none; }
-    .settlement-item.has-data .settlement-detail { display: block; }
-    .settlement-detail-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-    .settlement-info-item { display: flex; flex-direction: column; gap: 2px; }
-    .settlement-info-item .si-label { font-size: 11px; color: var(--muted); }
-    .settlement-info-item .si-value { font-size: 15px; font-weight: 700; color: var(--accent2); }
-    .settlement-edit-btn { padding: 5px 12px; background: rgba(124,106,247,0.15); border: 1px solid rgba(124,106,247,0.3); border-radius: 8px; color: var(--accent); font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
-    .settlement-edit-btn:hover { background: rgba(124,106,247,0.25); }
-    .settlement-input-btn { padding: 8px 16px; background: rgba(94,234,212,0.12); border: 1px solid rgba(94,234,212,0.25); border-radius: 8px; color: var(--accent2); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; margin-left: auto; }
-    .settlement-input-btn:hover { background: rgba(94,234,212,0.2); }
+    .si-top { display: flex; align-items: center; gap: 12px; width: 100%; cursor: pointer; padding: 2px 0; border-radius: 8px; transition: background 0.15s; }
+    .si-top:hover { background: rgba(255,255,255,0.03); }
+    .si-data { margin-top: 8px; padding: 12px 14px; background: rgba(94,234,212,0.06); border: 1px solid rgba(94,234,212,0.14); border-radius: 10px; width: 100%; display: none; }
+    .settlement-item.has-data .si-data { display: block; }
+    .si-row { display: flex; gap: 24px; flex-wrap: wrap; }
+    .si-col .sic-label { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+    .si-col .sic-val { font-size: 14px; font-weight: 700; color: var(--accent2); }
+    .si-input-btn { margin-left: auto; padding: 5px 12px; background: rgba(94,234,212,0.12); border: 1px solid rgba(94,234,212,0.22); border-radius: 7px; color: var(--accent2); font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; }
+    .si-edit-btn { margin-left: auto; padding: 5px 10px; background: rgba(124,106,247,0.12); border: 1px solid rgba(124,106,247,0.25); border-radius: 7px; color: var(--accent); font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
 
     /* 모달 공통 */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.72); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
     .modal-overlay.show { opacity: 1; pointer-events: all; }
-    .modal { background: var(--card2); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 28px; width: 100%; max-width: 420px; transform: scale(0.95) translateY(10px); transition: transform 0.2s; }
+    .modal { background: var(--card2); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 26px; width: 100%; max-width: 440px; transform: scale(0.95) translateY(10px); transition: transform 0.2s; }
     .modal-overlay.show .modal { transform: scale(1) translateY(0); }
-    .modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
-    .modal p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
-    .form-label { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; display: block; }
-    .form-group { margin-bottom: 16px; }
-    .modal input[type="text"], .modal input[type="date"], .modal input[type="number"] { width: 100%; padding: 13px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: var(--text); font-size: 16px; outline: none; font-family: inherit; transition: border-color 0.2s; color-scheme: dark; }
+    .modal h3 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .modal .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+    .fl { font-size: 12px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 7px; }
+    .fg { margin-bottom: 16px; }
+    .modal input[type="text"], .modal input[type="date"], .modal input[type="number"] { width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 11px; color: var(--text); font-size: 15px; outline: none; font-family: inherit; transition: border-color 0.2s; color-scheme: dark; }
     .modal input:focus { border-color: var(--accent); }
-    .amount-wrap { position: relative; }
-    .amount-wrap input { padding-right: 36px; }
-    .amount-suffix { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
-    .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
-    .btn-cancel { flex: 1; padding: 12px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 12px; color: var(--muted); font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
-    .btn-cancel:hover { color: var(--text); }
-    .btn-confirm { flex: 2; padding: 12px; background: var(--accent); border: none; border-radius: 12px; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
-    .btn-confirm:hover { background: #6a58e0; }
-    .btn-confirm.teal { background: #0d9488; }
-    .btn-confirm.teal:hover { background: #0f766e; }
+    .aw { position: relative; }
+    .aw input { padding-right: 32px; }
+    .aw-suf { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 13px; pointer-events: none; }
+
+    /* 수주 유형 버튼 */
+    .type-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .tbtn { padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: transparent; color: var(--muted); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; text-align: center; }
+    .tbtn:hover { border-color: rgba(124,106,247,0.3); color: var(--text); }
+    .tbtn.selected { border-color: var(--accent); background: rgba(124,106,247,0.14); color: var(--text); }
+    .tbtn[data-t="아웃바운드"].selected { border-color: #f87171; background: rgba(239,68,68,0.12); color: #f87171; }
+    .tbtn[data-t="인바운드"].selected  { border-color: #60a5fa; background: rgba(59,130,246,0.12); color: #60a5fa; }
+    .tbtn[data-t="소개건"].selected    { border-color: #fbbf24; background: rgba(234,179,8,0.12); color: #fbbf24; }
+    .tbtn[data-t="연장"].selected      { border-color: #4ade80; background: rgba(34,197,94,0.12); color: #4ade80; }
+
+    /* 모달 버튼 */
+    .mbtns { display: flex; gap: 10px; margin-top: 18px; }
+    .mcancel { flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 11px; color: var(--muted); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .mcancel:hover { color: var(--text); }
+    .mconfirm { flex: 2; padding: 12px; background: var(--accent); border: none; border-radius: 11px; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .mconfirm:hover { background: #6a58e0; }
+    .mconfirm.teal { background: #0d9488; }
+    .mconfirm.teal:hover { background: #0f766e; }
 
     /* 로딩 / 토스트 */
-    .loading { text-align: center; padding: 80px 20px; color: var(--muted); }
-    .spinner { width: 36px; height: 36px; border: 3px solid rgba(124,106,247,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+    .loading { text-align: center; padding: 72px 20px; color: var(--muted); }
+    .spinner { width: 34px; height: 34px; border: 3px solid rgba(124,106,247,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--card2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 20px; font-size: 14px; font-weight: 500; z-index: 300; transition: transform 0.3s ease; white-space: nowrap; }
+    .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--card2); border: 1px solid rgba(255,255,255,0.1); border-radius: 11px; padding: 11px 18px; font-size: 13px; font-weight: 500; z-index: 300; transition: transform 0.3s; white-space: nowrap; }
     .toast.show { transform: translateX(-50%) translateY(0); }
-    .toast.success { border-color: rgba(34,197,94,0.4); color: #4ade80; }
-    .toast.error { border-color: rgba(239,68,68,0.4); color: #f87171; }
+    .toast.ok  { border-color: rgba(34,197,94,0.4); color: #4ade80; }
+    .toast.err { border-color: rgba(239,68,68,0.4); color: #f87171; }
   </style>
 </head>
 <body>
-  <div class="glow-bg"></div>
+  <div class="glow"></div>
 
   <header>
     <a class="back-btn" href="/admin/">←</a>
@@ -138,65 +152,75 @@
       <div class="header-name" id="memberNameDisplay">로딩 중...</div>
       <div class="header-sub">브랜드별 업무 체크리스트</div>
     </div>
-    <button class="add-brand-btn" id="addBrandBtn">＋ 브랜드 추가</button>
+    <button class="add-btn" id="addBrandBtn">＋ 브랜드 추가</button>
   </header>
 
-  <!-- 이달 정산 배너 -->
-  <div class="settlement-banner" id="settlementBanner" style="display:none">
-    <div class="s-item">
-      <div class="s-label">이달 정산 건수</div>
-      <div class="s-value count" id="myMonthCount">-</div>
-    </div>
-    <div class="s-item">
-      <div class="s-label">이달 정산 총액</div>
-      <div class="s-value amount" id="myMonthAmount">-</div>
-    </div>
+  <div class="banner" id="banner" style="display:none">
+    <div class="banner-item"><div class="bl">이달 정산 건수</div><div class="bv bv-purple" id="monthCount">-</div></div>
+    <div class="banner-item"><div class="bl">이달 정산 총액</div><div class="bv bv-teal" id="monthAmount">-</div></div>
   </div>
 
   <div class="main">
-    <div class="loading" id="loadingEl"><div class="spinner"></div><div>데이터 불러오는 중...</div></div>
-    <div id="emptyState" class="empty-state" style="display:none">
-      <div class="icon">📋</div>
+    <div class="loading" id="loadingEl"><div class="spinner"></div><div>불러오는 중...</div></div>
+    <div class="empty" id="emptyEl" style="display:none">
+      <div class="ei">📋</div>
       <h2>담당 브랜드가 없어요</h2>
-      <p>상단 '브랜드 추가' 버튼으로 첫 번째 브랜드를 등록해보세요</p>
+      <p>'브랜드 추가' 버튼으로 첫 브랜드를 등록해보세요</p>
     </div>
-    <div class="brands-list" id="brandsList"></div>
+    <div class="brands" id="brandsList"></div>
   </div>
 
   <!-- 브랜드 추가 모달 -->
-  <div class="modal-overlay" id="modalOverlay">
+  <div class="modal-overlay" id="addModal">
     <div class="modal">
       <h3>브랜드 추가</h3>
-      <p>수주된 브랜드명을 입력해주세요</p>
-      <div class="form-group">
+      <div class="sub">수주된 브랜드 정보를 입력해주세요</div>
+      <div class="fg">
+        <label class="fl">브랜드명</label>
         <input type="text" id="brandNameInput" placeholder="예) 나이키, 삼성전자..." maxlength="50" />
       </div>
-      <div class="modal-btns">
-        <button class="btn-cancel" id="cancelBtn">취소</button>
-        <button class="btn-confirm" id="confirmBtn">추가하기</button>
+      <div class="fg">
+        <label class="fl">수주 유형</label>
+        <div class="type-btns">
+          <button class="tbtn selected" data-t="아웃바운드">아웃바운드</button>
+          <button class="tbtn" data-t="인바운드">인바운드</button>
+          <button class="tbtn" data-t="소개건">소개건</button>
+          <button class="tbtn" data-t="연장">연장</button>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">수주금액 (선택)</label>
+        <div class="aw">
+          <input type="number" id="contractAmountInput" placeholder="0" min="0" />
+          <span class="aw-suf">원</span>
+        </div>
+      </div>
+      <div class="mbtns">
+        <button class="mcancel" id="addCancelBtn">취소</button>
+        <button class="mconfirm" id="addConfirmBtn">추가하기</button>
       </div>
     </div>
   </div>
 
-  <!-- 정산 입력 모달 -->
+  <!-- 정산 모달 -->
   <div class="modal-overlay" id="settlementModal">
     <div class="modal">
       <h3>📅 정산 일정 등록</h3>
-      <p>정산 날짜와 금액을 입력해주세요</p>
-      <div class="form-group">
-        <label class="form-label">정산 일자</label>
-        <input type="date" id="settlementDateInput" />
+      <div class="sub">정산 날짜와 금액을 입력해주세요</div>
+      <div class="fg">
+        <label class="fl">정산 일자</label>
+        <input type="date" id="settleDateInput" />
       </div>
-      <div class="form-group">
-        <label class="form-label">정산 금액</label>
-        <div class="amount-wrap">
-          <input type="number" id="settlementAmountInput" placeholder="0" min="0" />
-          <span class="amount-suffix">원</span>
+      <div class="fg">
+        <label class="fl">정산 금액</label>
+        <div class="aw">
+          <input type="number" id="settleAmountInput" placeholder="0" min="0" />
+          <span class="aw-suf">원</span>
         </div>
       </div>
-      <div class="modal-btns">
-        <button class="btn-cancel" id="settlementCancelBtn">취소</button>
-        <button class="btn-confirm teal" id="settlementSaveBtn">저장하기</button>
+      <div class="mbtns">
+        <button class="mcancel" id="settleCancelBtn">취소</button>
+        <button class="mconfirm teal" id="settleSaveBtn">저장하기</button>
       </div>
     </div>
   </div>
@@ -210,18 +234,22 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNrbm1rY2duenVudXZsc25seHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1NjU1NzYsImV4cCI6MjA5NDE0MTU3Nn0.ZIvQYIPkBKY6Ys73MINdbfCPLU3V7-gfkcLJO-P5tFM'
     );
 
-    const PRE_TASKS  = [
-      { key:'meeting_material', label:'미팅자료' },
-      { key:'proposal',         label:'실행안 / 제안서' },
-    ];
-    const POST_TASKS = [
+    const STAGE = 'main';
+    const TASKS = [
+      { key:'meeting_prep',   label:'미팅자료준비' },
+      { key:'meeting',        label:'미팅' },
+      { key:'proposal',       label:'실행안/제안서' },
       { key:'google_sheet',   label:'구글시트 생성' },
       { key:'vendor_upload',  label:'신규업체 업로드' },
       { key:'quotation',      label:'견적서' },
+      { key:'contract',       label:'계약서' },
       { key:'invoice',        label:'계산서 발행' },
-      { key:'settlement',     label:'정산 일정' },  // 마지막 - 특수 처리
+      { key:'kickoff',        label:'킥오프미팅' },
+      { key:'review_meeting', label:'리뷰미팅' },
+      { key:'settlement',     label:'정산일자', isSettlement: true },
     ];
-    const ALL_TASKS = [...PRE_TASKS.map(t=>({...t,stage:'pre'})), ...POST_TASKS.map(t=>({...t,stage:'post'}))];
+
+    const TYPE_MAP = { '아웃바운드':'tb-out','인바운드':'tb-in','소개건':'tb-ref','연장':'tb-renew' };
 
     const params = new URLSearchParams(location.search);
     const memberName = params.get('name');
@@ -229,299 +257,259 @@
     document.getElementById('memberNameDisplay').textContent = memberName;
     document.title = `${memberName} - 업무 체크리스트`;
 
-    let brandsData = [];
-    let currentSettlementBrandId = null;
+    let brands = [];
+    let currentSettleBrandId = null;
 
-    // ── 데이터 로드 ─────────────────────────────────────────
-    async function loadData() {
+    // ── 로드 ─────────────────────────────────────────────────
+    async function load() {
       document.getElementById('loadingEl').style.display = 'block';
       document.getElementById('brandsList').innerHTML = '';
-      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('emptyEl').style.display = 'none';
 
-      const { data: brands, error } = await sb
+      const { data, error } = await sb
         .from('op_brands')
         .select('*, op_tasks(*)')
         .eq('member_name', memberName)
         .order('created_at', { ascending: true });
 
       document.getElementById('loadingEl').style.display = 'none';
-      if (error) { showToast('데이터 로드 실패', 'error'); return; }
+      if (error) { showToast('데이터 로드 실패', 'err'); return; }
 
-      brandsData = brands || [];
+      brands = data || [];
+      renderBanner();
       renderBrands();
-      renderSettlementBanner();
     }
 
-    // ── 이달 정산 배너 ─────────────────────────────────────
-    function renderSettlementBanner() {
+    // ── 배너 ─────────────────────────────────────────────────
+    function renderBanner() {
       const now = new Date();
-      const thisYear = now.getFullYear(), thisMonth = now.getMonth();
-      const settled = brandsData.filter(b => {
+      const yy = now.getFullYear(), mm = now.getMonth();
+      const settled = brands.filter(b => {
         if (!b.settlement_date) return false;
         const d = new Date(b.settlement_date);
-        return d.getFullYear() === thisYear && d.getMonth() === thisMonth;
+        return d.getFullYear() === yy && d.getMonth() === mm;
       });
-      const totalAmt = settled.reduce((s, b) => s + (b.settlement_amount || 0), 0);
-      const banner = document.getElementById('settlementBanner');
+      const total = settled.reduce((s,b) => s + (b.settlement_amount||0), 0);
+      const banner = document.getElementById('banner');
       if (settled.length > 0) {
         banner.style.display = 'flex';
-        document.getElementById('myMonthCount').textContent = `${settled.length}건`;
-        document.getElementById('myMonthAmount').textContent = totalAmt.toLocaleString('ko-KR') + '원';
+        document.getElementById('monthCount').textContent = `${settled.length}건`;
+        document.getElementById('monthAmount').textContent = total.toLocaleString('ko-KR') + '원';
       } else {
         banner.style.display = 'none';
       }
     }
 
-    // ── 브랜드 렌더 ────────────────────────────────────────
+    // ── 브랜드 목록 렌더 ─────────────────────────────────────
     function renderBrands() {
       const list = document.getElementById('brandsList');
       list.innerHTML = '';
-      if (brandsData.length === 0) { document.getElementById('emptyState').style.display = 'block'; return; }
-      document.getElementById('emptyState').style.display = 'none';
-      brandsData.forEach(b => list.appendChild(createBrandCard(b)));
+      if (!brands.length) { document.getElementById('emptyEl').style.display = 'block'; return; }
+      brands.forEach(b => list.appendChild(makeCard(b)));
     }
 
-    function taskStatus(tasks, stage, key) {
-      const t = tasks.find(t => t.stage === stage && t.task_key === key);
-      return t ? { done: t.is_completed, time: t.completed_at } : { done: false, time: null };
+    function isDone(tasks, key) {
+      return tasks.some(t => t.task_key === key && t.is_completed);
     }
 
-    function calcProgress(tasks) {
-      const done = ALL_TASKS.filter(t => taskStatus(tasks, t.stage, t.key).done).length;
-      return { done, total: ALL_TASKS.length };
-    }
-
-    function createBrandCard(brand) {
+    function makeCard(brand) {
       const tasks = brand.op_tasks || [];
-      const { done, total } = calcProgress(tasks);
-      const pct = Math.round((done / total) * 100);
-      const preDone  = PRE_TASKS.filter(t => taskStatus(tasks,'pre',t.key).done).length;
-      const postDone = POST_TASKS.filter(t => taskStatus(tasks,'post',t.key).done).length;
-
-      const card = document.createElement('div');
-      card.className = 'brand-card';
-      card.dataset.brandId = brand.id;
-
-      // 정산 날짜/금액 표시용
-      const hasSettlement = brand.settlement_date;
-      const settleDateStr = hasSettlement
-        ? new Date(brand.settlement_date).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'})
-        : '';
-      const settleAmtStr = brand.settlement_amount
-        ? brand.settlement_amount.toLocaleString('ko-KR') + '원'
-        : '';
-
-      card.innerHTML = `
-        <div class="brand-header">
-          <div class="brand-icon">🏷️</div>
-          <div class="brand-meta">
-            <div class="brand-name">${brand.brand_name}</div>
-            <div class="brand-progress-text">${done}/${total} 완료 · ${pct}%</div>
-          </div>
-          <div class="brand-actions">
-            <button class="delete-btn" title="삭제">✕</button>
-            <span class="chevron">›</span>
-          </div>
-        </div>
-        <div class="progress-bar-wrap">
-          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
-        </div>
-        <div class="checklist-body">
-          <div class="tabs-wrap">
-            <div class="tabs">
-              <button class="tab-btn active" data-tab="pre">수주전 <span class="tab-badge">${preDone}/${PRE_TASKS.length}</span></button>
-              <button class="tab-btn" data-tab="post">수주후 <span class="tab-badge">${postDone}/${POST_TASKS.length}</span></button>
-            </div>
-          </div>
-          <div class="checklist-pane active" data-pane="pre">
-            ${PRE_TASKS.map(t => renderCheck(tasks,'pre',t)).join('')}
-          </div>
-          <div class="checklist-pane" data-pane="post">
-            ${POST_TASKS.filter(t => t.key !== 'settlement').map(t => renderCheck(tasks,'post',t)).join('')}
-            ${renderSettlementCheck(brand, tasks)}
-          </div>
-        </div>
-      `;
-
-      // 헤더 토글
-      card.querySelector('.brand-header').addEventListener('click', e => {
-        if (e.target.closest('.delete-btn')) return;
-        card.classList.toggle('open');
-      });
-
-      // 삭제
-      card.querySelector('.delete-btn').addEventListener('click', async e => {
-        e.stopPropagation();
-        if (!confirm(`"${brand.brand_name}" 브랜드를 삭제할까요?`)) return;
-        const { error } = await sb.from('op_brands').delete().eq('id', brand.id);
-        if (!error) { showToast('브랜드 삭제됨', 'success'); loadData(); }
-        else showToast('삭제 실패', 'error');
-      });
-
-      // 탭
-      card.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          card.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-          card.querySelectorAll('.checklist-pane').forEach(p => p.classList.remove('active'));
-          btn.classList.add('active');
-          card.querySelector(`[data-pane="${btn.dataset.tab}"]`).classList.add('active');
-        });
-      });
-
-      // 일반 체크 토글
-      card.querySelectorAll('.check-item:not(.settlement-item)').forEach(item => {
-        item.addEventListener('click', () => toggleTask(item, brand.id));
-      });
-
-      // 정산 입력 버튼
-      const settlementInputBtn = card.querySelector('.settlement-input-btn');
-      const settlementEditBtn  = card.querySelector('.settlement-edit-btn');
-      if (settlementInputBtn) {
-        settlementInputBtn.addEventListener('click', e => { e.stopPropagation(); openSettlementModal(brand); });
-      }
-      if (settlementEditBtn) {
-        settlementEditBtn.addEventListener('click', e => { e.stopPropagation(); openSettlementModal(brand); });
-      }
-
-      return card;
-    }
-
-    function renderCheck(tasks, stage, taskDef) {
-      const { done, time } = taskStatus(tasks, stage, taskDef.key);
-      const t = time ? new Date(time).toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'}) : '';
-      return `
-        <div class="check-item ${done?'checked':''}" data-stage="${stage}" data-key="${taskDef.key}">
-          <div class="checkbox"></div>
-          <div class="check-label">${taskDef.label}</div>
-          ${t ? `<div class="check-time">${t}</div>` : ''}
-        </div>`;
-    }
-
-    function renderSettlementCheck(brand, tasks) {
-      const { done } = taskStatus(tasks, 'post', 'settlement');
-      const hasData = !!brand.settlement_date;
-      const settleDateStr = hasData
-        ? new Date(brand.settlement_date).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'})
+      const doneCount = TASKS.filter(t => isDone(tasks, t.key)).length;
+      const pct = Math.round((doneCount / TASKS.length) * 100);
+      const typeCls = TYPE_MAP[brand.brand_type] || 'tb-out';
+      const amtStr = brand.contract_amount ? brand.contract_amount.toLocaleString('ko-KR') + '원' : '';
+      const hasSettle = !!brand.settlement_date;
+      const settleDateStr = hasSettle
+        ? new Date(brand.settlement_date).toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric'})
         : '';
       const settleAmtStr = brand.settlement_amount
         ? brand.settlement_amount.toLocaleString('ko-KR') + '원' : '미입력';
 
-      return `
-        <div class="check-item settlement-item ${done?'checked':''} ${hasData?'has-data':''}">
-          <div class="settlement-item-top">
-            <div class="checkbox"></div>
-            <div class="check-label" style="${done?'color:var(--muted);text-decoration:line-through':''}">정산 일정</div>
-            <button class="${hasData ? 'settlement-edit-btn' : 'settlement-input-btn'}">
-              ${hasData ? '수정' : '📅 날짜·금액 입력'}
-            </button>
-          </div>
-          ${hasData ? `
-            <div class="settlement-detail">
-              <div class="settlement-detail-row">
-                <div class="settlement-info-item">
-                  <span class="si-label">정산 일자</span>
-                  <span class="si-value">📅 ${settleDateStr}</span>
-                </div>
-                <div class="settlement-info-item">
-                  <span class="si-label">정산 금액</span>
-                  <span class="si-value">💰 ${settleAmtStr}</span>
-                </div>
+      const card = document.createElement('div');
+      card.className = 'brand-card';
+      card.dataset.id = brand.id;
+
+      const checksHtml = TASKS.map((t, i) => {
+        if (t.isSettlement) {
+          const done = isDone(tasks, t.key);
+          return `
+            <div class="check-item settlement-item ${done?'checked':''} ${hasSettle?'has-data':''}">
+              <div class="si-top">
+                <div class="checkbox"></div>
+                <span class="check-num">${i+1}</span>
+                <div class="check-label" style="${done?'color:var(--muted);text-decoration:line-through':''}">정산일자</div>
+                <button class="${hasSettle ? 'si-edit-btn' : 'si-input-btn'}">${hasSettle ? '수정' : '📅 입력'}</button>
               </div>
+              ${hasSettle ? `
+                <div class="si-data">
+                  <div class="si-row">
+                    <div class="si-col"><div class="sic-label">정산 일자</div><div class="sic-val">📅 ${settleDateStr}</div></div>
+                    <div class="si-col"><div class="sic-label">금액</div><div class="sic-val">💰 ${settleAmtStr}</div></div>
+                  </div>
+                </div>` : ''}
+            </div>`;
+        }
+        const done = isDone(tasks, t.key);
+        const taskObj = tasks.find(x => x.task_key === t.key);
+        const timeStr = taskObj?.completed_at
+          ? new Date(taskObj.completed_at).toLocaleDateString('ko-KR', {month:'numeric',day:'numeric'}) : '';
+        return `
+          <div class="check-item ${done?'checked':''}" data-key="${t.key}">
+            <div class="checkbox"></div>
+            <span class="check-num">${i+1}</span>
+            <div class="check-label">${t.label}</div>
+            ${timeStr ? `<div class="check-time">${timeStr}</div>` : ''}
+          </div>`;
+      }).join('');
+
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-icon">🏷️</div>
+          <div class="card-meta">
+            <div class="card-name">${brand.brand_name}</div>
+            <div class="card-badges">
+              <span class="type-badge ${typeCls}">${brand.brand_type || '아웃바운드'}</span>
+              ${amtStr ? `<span class="amount-badge">${amtStr}</span>` : ''}
+              <span class="progress-text">${doneCount}/${TASKS.length} 완료</span>
             </div>
-          ` : ''}
-        </div>`;
+          </div>
+          <div class="card-actions">
+            <button class="del-btn">✕</button>
+            <span class="chevron">›</span>
+          </div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-bg"><div class="prog-fill" style="width:${pct}%"></div></div>
+        </div>
+        <div class="checklist">${checksHtml}</div>
+      `;
+
+      // 헤더 토글
+      card.querySelector('.card-header').addEventListener('click', e => {
+        if (e.target.closest('.del-btn')) return;
+        card.classList.toggle('open');
+      });
+
+      // 삭제
+      card.querySelector('.del-btn').addEventListener('click', async e => {
+        e.stopPropagation();
+        if (!confirm(`"${brand.brand_name}" 삭제할까요?`)) return;
+        const { error } = await sb.from('op_brands').delete().eq('id', brand.id);
+        if (!error) { showToast('삭제됐어요', 'ok'); load(); }
+        else showToast('삭제 실패', 'err');
+      });
+
+      // 일반 체크
+      card.querySelectorAll('.check-item:not(.settlement-item)').forEach(item => {
+        item.addEventListener('click', () => toggle(item, brand.id));
+      });
+
+      // 정산 버튼
+      const siInputBtn = card.querySelector('.si-input-btn');
+      const siEditBtn  = card.querySelector('.si-edit-btn');
+      if (siInputBtn) siInputBtn.addEventListener('click', e => { e.stopPropagation(); openSettleModal(brand); });
+      if (siEditBtn)  siEditBtn.addEventListener('click',  e => { e.stopPropagation(); openSettleModal(brand); });
+
+      return card;
     }
 
-    // ── 체크 토글 ───────────────────────────────────────────
-    async function toggleTask(item, brandId) {
-      const stage   = item.dataset.stage;
-      const taskKey = item.dataset.key;
-      const newVal  = !item.classList.contains('checked');
+    // ── 토글 ─────────────────────────────────────────────────
+    async function toggle(item, brandId) {
+      const key = item.dataset.key;
+      const newVal = !item.classList.contains('checked');
       item.classList.toggle('checked', newVal);
-
       const { error } = await sb.from('op_tasks').upsert({
-        brand_id: brandId, stage, task_key: taskKey,
+        brand_id: brandId, stage: STAGE, task_key: key,
         is_completed: newVal,
         completed_at: newVal ? new Date().toISOString() : null,
         updated_at: new Date().toISOString(),
       }, { onConflict: 'brand_id,stage,task_key' });
-
-      if (error) { showToast('저장 실패', 'error'); item.classList.toggle('checked', !newVal); }
-      else await loadData();
+      if (error) { showToast('저장 실패', 'err'); item.classList.toggle('checked', !newVal); }
+      else await load();
     }
 
-    // ── 정산 모달 ───────────────────────────────────────────
-    function openSettlementModal(brand) {
-      currentSettlementBrandId = brand.id;
-      document.getElementById('settlementDateInput').value   = brand.settlement_date || '';
-      document.getElementById('settlementAmountInput').value = brand.settlement_amount || '';
+    // ── 정산 모달 ─────────────────────────────────────────────
+    function openSettleModal(brand) {
+      currentSettleBrandId = brand.id;
+      document.getElementById('settleDateInput').value   = brand.settlement_date || '';
+      document.getElementById('settleAmountInput').value = brand.settlement_amount || '';
       document.getElementById('settlementModal').classList.add('show');
     }
-
-    document.getElementById('settlementCancelBtn').addEventListener('click', () => {
-      document.getElementById('settlementModal').classList.remove('show');
-    });
+    document.getElementById('settleCancelBtn').addEventListener('click', () =>
+      document.getElementById('settlementModal').classList.remove('show'));
     document.getElementById('settlementModal').addEventListener('click', e => {
       if (e.target === document.getElementById('settlementModal'))
         document.getElementById('settlementModal').classList.remove('show');
     });
-
-    document.getElementById('settlementSaveBtn').addEventListener('click', async () => {
-      const date   = document.getElementById('settlementDateInput').value;
-      const amount = parseInt(document.getElementById('settlementAmountInput').value) || 0;
+    document.getElementById('settleSaveBtn').addEventListener('click', async () => {
+      const date   = document.getElementById('settleDateInput').value;
+      const amount = parseInt(document.getElementById('settleAmountInput').value) || 0;
       if (!date) { alert('정산 일자를 선택해주세요'); return; }
-
-      // op_brands 업데이트
-      const { error: e1 } = await sb.from('op_brands').update({
-        settlement_date: date, settlement_amount: amount
-      }).eq('id', currentSettlementBrandId);
-
-      // op_tasks 정산 체크 완료 처리
+      const { error: e1 } = await sb.from('op_brands')
+        .update({ settlement_date: date, settlement_amount: amount })
+        .eq('id', currentSettleBrandId);
       const { error: e2 } = await sb.from('op_tasks').upsert({
-        brand_id: currentSettlementBrandId, stage: 'post', task_key: 'settlement',
+        brand_id: currentSettleBrandId, stage: STAGE, task_key: 'settlement',
         is_completed: true, completed_at: new Date().toISOString(), updated_at: new Date().toISOString(),
       }, { onConflict: 'brand_id,stage,task_key' });
-
-      if (e1 || e2) { showToast('저장 실패', 'error'); return; }
-
+      if (e1 || e2) { showToast('저장 실패', 'err'); return; }
       document.getElementById('settlementModal').classList.remove('show');
-      showToast('정산 일정이 저장됐어요 ✅', 'success');
-      loadData();
+      showToast('정산 일정 저장됐어요 ✅', 'ok');
+      load();
     });
 
-    // ── 브랜드 추가 모달 ────────────────────────────────────
-    const modal = document.getElementById('modalOverlay');
-    const input = document.getElementById('brandNameInput');
+    // ── 브랜드 추가 모달 ─────────────────────────────────────
+    let selectedType = '아웃바운드';
+    const addModal = document.getElementById('addModal');
+    const nameInput = document.getElementById('brandNameInput');
+
     document.getElementById('addBrandBtn').addEventListener('click', () => {
-      modal.classList.add('show'); input.value = ''; setTimeout(() => input.focus(), 100);
+      addModal.classList.add('show');
+      nameInput.value = '';
+      document.getElementById('contractAmountInput').value = '';
+      selectedType = '아웃바운드';
+      document.querySelectorAll('.tbtn').forEach(b => b.classList.toggle('selected', b.dataset.t === selectedType));
+      setTimeout(() => nameInput.focus(), 100);
     });
-    document.getElementById('cancelBtn').addEventListener('click', () => modal.classList.remove('show'));
-    modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('show'); });
-    document.getElementById('confirmBtn').addEventListener('click', addBrand);
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') addBrand(); });
+    document.getElementById('addCancelBtn').addEventListener('click', () => addModal.classList.remove('show'));
+    addModal.addEventListener('click', e => { if (e.target === addModal) addModal.classList.remove('show'); });
+
+    document.querySelectorAll('.tbtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedType = btn.dataset.t;
+        document.querySelectorAll('.tbtn').forEach(b => b.classList.toggle('selected', b.dataset.t === selectedType));
+      });
+    });
+
+    document.getElementById('addConfirmBtn').addEventListener('click', addBrand);
+    nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') addBrand(); });
 
     async function addBrand() {
-      const name = input.value.trim();
-      if (!name) { input.focus(); return; }
-      const { error } = await sb.from('op_brands').insert({ member_name: memberName, brand_name: name });
+      const name   = nameInput.value.trim();
+      const amount = parseInt(document.getElementById('contractAmountInput').value) || 0;
+      if (!name) { nameInput.focus(); return; }
+      const { error } = await sb.from('op_brands').insert({
+        member_name: memberName, brand_name: name,
+        brand_type: selectedType, contract_amount: amount,
+      });
       if (error) {
-        if (error.code === '23505') showToast('이미 있는 브랜드명이에요', 'error');
-        else showToast('추가 실패', 'error');
+        if (error.code === '23505') showToast('이미 있는 브랜드명이에요', 'err');
+        else showToast('추가 실패', 'err');
         return;
       }
-      modal.classList.remove('show');
-      showToast(`"${name}" 추가됐어요 🎉`, 'success');
-      loadData();
+      addModal.classList.remove('show');
+      showToast(`"${name}" 추가됐어요 🎉`, 'ok');
+      load();
     }
 
-    // ── 토스트 ─────────────────────────────────────────────
-    function showToast(msg, type = 'success') {
+    // ── 토스트 ────────────────────────────────────────────────
+    function showToast(msg, type = 'ok') {
       const t = document.getElementById('toast');
       t.textContent = msg; t.className = `toast ${type} show`;
-      setTimeout(() => t.classList.remove('show'), 2800);
+      setTimeout(() => t.classList.remove('show'), 2600);
     }
 
-    loadData();
+    load();
   </script>
 </body>
 </html>
