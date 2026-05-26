@@ -420,30 +420,32 @@
         </div>`;
       }
       document.getElementById('calGrid').innerHTML = html;
-      document.querySelectorAll('.cal-day[data-date]').forEach(el => {
-        el.addEventListener('click', () => selectCalDate(el.dataset.date, map));
+      // 클릭 핸들러 — selectedDate 설정 후 renderCalendar만 호출 (루프 방지)
+      document.getElementById('calGrid').querySelectorAll('.cal-day[data-date]').forEach(el => {
+        el.addEventListener('click', () => {
+          selectedDate = el.dataset.date;
+          renderCalendar();
+        });
       });
-      if (selectedDate) selectCalDate(selectedDate, map);
-    }
-
-    function selectCalDate(dateStr, map) {
-      selectedDate = dateStr;
-      renderCalendar();
-      const items = map[dateStr] || [];
+      // 상세 패널 (renderCalendar 안에서 직접 처리)
       const detail = document.getElementById('calDetail');
-      if (!items.length) { detail.className = 'cal-detail'; return; }
-      const d = new Date(dateStr);
-      const label = d.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'});
-      detail.innerHTML = `<div class="cal-detail-title">📅 ${label}</div>
-        ${items.map(it => `
-          <div class="cal-task-item">
-            <div class="cal-task-check ${it.isDone?'done':''}"></div>
-            <div class="cal-task-info">
-              <div class="ct-brand">${it.brandName}</div>
-              <div class="ct-label">${it.label}</div>
-            </div>
-          </div>`).join('')}`;
-      detail.className = 'cal-detail show';
+      if (selectedDate && map[selectedDate]?.length) {
+        const items = map[selectedDate];
+        const d = new Date(selectedDate);
+        const label = d.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'});
+        detail.innerHTML = `<div class="cal-detail-title">📅 ${label} · ${items.length}건</div>
+          ${items.map(it => `
+            <div class="cal-task-item">
+              <div class="cal-task-check ${it.isDone?'done':''}"></div>
+              <div class="cal-task-info">
+                <div class="ct-brand">${it.brandName}</div>
+                <div class="ct-label">${it.label}</div>
+              </div>
+            </div>`).join('')}`;
+        detail.className = 'cal-detail show';
+      } else {
+        detail.className = 'cal-detail';
+      }
     }
 
     // 캘린더 토글
