@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>어드민 대시보드 - 전체 현황</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --card: #1a1a26;
+      --card2: #1e1e2e;
+      --border: rgba(255,255,255,0.07);
+      --accent: #7c6af7;
+      --accent2: #5eead4;
+      --text: #f0f0f8;
+      --muted: #6b6b80;
+      --success: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+    }
+    body {
+      font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+    .glow-bg {
+      position: fixed; top: -200px; left: 50%;
+      transform: translateX(-50%);
+      width: 900px; height: 500px;
+      background: radial-gradient(ellipse, rgba(124,106,247,0.12) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* 헤더 */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,15,0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      height: 64px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .back-btn {
+      color: var(--muted); text-decoration: none;
+      font-size: 22px; transition: color 0.2s;
+    }
+    .back-btn:hover { color: var(--text); }
+    .header-title { font-size: 18px; font-weight: 700; }
+    .header-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+    .refresh-btn {
+      margin-left: auto;
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted); font-size: 13px; font-weight: 500;
+      cursor: pointer; font-family: inherit;
+      transition: all 0.2s;
+    }
+    .refresh-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+
+    /* 메인 */
+    .main {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 32px 24px 0;
+    }
+
+    /* 요약 카드들 */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .summary-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 22px;
+    }
+    .summary-card .label {
+      font-size: 12px; color: var(--muted);
+      font-weight: 500; margin-bottom: 8px;
+    }
+    .summary-card .value {
+      font-size: 28px; font-weight: 800;
+    }
+    .summary-card .sub {
+      font-size: 12px; color: var(--muted); margin-top: 4px;
+    }
+    .c-purple .value { color: var(--accent); }
+    .c-green .value { color: var(--success); }
+    .c-yellow .value { color: var(--warn); }
+    .c-teal .value { color: var(--accent2); }
+
+    /* 섹션 타이틀 */
+    .section-title {
+      font-size: 13px; font-weight: 600;
+      color: var(--muted); letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    /* 팀원 섹션들 */
+    .members-wrap {
+      display: flex; flex-direction: column; gap: 24px;
+    }
+
+    .member-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .member-section-header {
+      padding: 18px 24px;
+      display: flex; align-items: center; gap: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .member-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 700; flex-shrink: 0;
+    }
+    .c1 { background: rgba(239,68,68,0.2); color: #f87171; }
+    .c2 { background: rgba(234,179,8,0.2); color: #fbbf24; }
+    .c3 { background: rgba(34,197,94,0.2); color: #4ade80; }
+    .c4 { background: rgba(59,130,246,0.2); color: #60a5fa; }
+    .c5 { background: rgba(168,85,247,0.2); color: #c084fc; }
+
+    .member-section-header .name {
+      font-size: 16px; font-weight: 700;
+    }
+    .member-section-header .stats {
+      font-size: 12px; color: var(--muted); margin-top: 2px;
+    }
+    .member-rate {
+      margin-left: auto;
+      font-size: 22px; font-weight: 800;
+    }
+    .rate-good { color: var(--success); }
+    .rate-mid { color: var(--warn); }
+    .rate-low { color: var(--danger); }
+
+    /* 브랜드 테이블 */
+    .brand-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .brand-table th {
+      padding: 10px 16px;
+      font-size: 11px; font-weight: 600;
+      color: var(--muted); text-align: left;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .brand-table td {
+      padding: 14px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      vertical-align: middle;
+    }
+    .brand-table tr:last-child td { border-bottom: none; }
+    .brand-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .brand-name-cell {
+      font-weight: 600; display: flex; align-items: center; gap: 8px;
+    }
+    .brand-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+
+    /* 체크 뱃지 */
+    .task-checks {
+      display: flex; gap: 5px; flex-wrap: wrap;
+    }
+    .task-chip {
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px; font-weight: 500;
+    }
+    .task-chip.done {
+      background: rgba(34,197,94,0.15);
+      color: #4ade80;
+    }
+    .task-chip.todo {
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+    }
+
+    /* 진행률 셀 */
+    .progress-cell { min-width: 120px; }
+    .mini-bar-bg {
+      height: 6px; border-radius: 100px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden; margin-bottom: 4px;
+    }
+    .mini-bar-fill {
+      height: 100%; border-radius: 100px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.5s;
+    }
+    .mini-bar-text { font-size: 11px; color: var(--muted); }
+
+    /* 빈 상태 */
+    .empty-row td {
+      text-align: center; padding: 32px;
+      color: var(--muted); font-size: 14px;
+    }
+
+    /* 로딩 */
+    .loading {
+      text-align: center; padding: 80px 20px; color: var(--muted);
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(124,106,247,0.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .last-updated {
+      text-align: right;
+      font-size: 12px; color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 640px) {
+      .brand-table th:nth-child(3),
+      .brand-table td:nth-child(3) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-bg"></div>
+
+  <header>
+    <a class="back-btn" href="/">←</a>
+    <div>
+      <div class="header-title">📊 어드민 대시보드</div>
+      <div class="header-sub">전체 팀원 업무 현황</div>
+    </div>
+    <button class="refresh-btn" id="refreshBtn">↻ 새로고침</button>
+  </header>
+
+  <div class="main">
+    <div class="loading" id="loadingEl">
+      <div class="spinner"></div>
+      <div>데이터 불러오는 중...</div>
+    </div>
+
+    <div id="content" style="display:none">
+      <!-- 요약 -->
+      <div class="summary-grid" id="summaryGrid"></div>
+
+      <div class="last-updated" id="lastUpdated"></div>
+
+      <div class="section-title">팀원별 현황</div>
+      <div class="members-wrap" id="membersWrap"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    const SUPABASE_URL = 'https://cknmkcgnzunuvlsnlxuj.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNrbm1rY2duenVudXZsc25seHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1NjU1NzYsImV4cCI6MjA5NDE0MTU3Nn0.ZIvQYIPkBKY6Ys73MINdbfCPLU3V7-gfkcLJO-P5tFM';
+    const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const MEMBERS = [
+      { name: '김병찬', cls: 'c1' },
+      { name: '김요엘',  cls: 'c2' },
+      { name: '최진유', cls: 'c3' },
+      { name: '강사랑', cls: 'c4' },
+      { name: '신예지', cls: 'c5' },
+    ];
+
+    const PRE_TASKS = [
+      { key: 'meeting_material', label: '미팅자료' },
+      { key: 'proposal', label: '실행안/제안서' },
+    ];
+    const POST_TASKS = [
+      { key: 'google_sheet', label: '구글시트' },
+      { key: 'vendor_upload', label: '업체 업로드' },
+      { key: 'quotation', label: '견적서' },
+      { key: 'invoice', label: '계산서' },
+      { key: 'settlement', label: '정산 일정' },
+    ];
+    const ALL_TASKS = [
+      ...PRE_TASKS.map(t => ({...t, stage:'pre'})),
+      ...POST_TASKS.map(t => ({...t, stage:'post'}))
+    ];
+
+    async function loadData() {
+      document.getElementById('loadingEl').style.display = 'block';
+      document.getElementById('content').style.display = 'none';
+
+      const { data, error } = await sb
+        .from('op_brands')
+        .select('*, op_tasks(*)')
+        .order('created_at', { ascending: true });
+
+      document.getElementById('loadingEl').style.display = 'none';
+
+      if (error) { alert('데이터 로드 실패'); return; }
+
+      renderDashboard(data || []);
+      document.getElementById('lastUpdated').textContent =
+        `마지막 업데이트: ${new Date().toLocaleString('ko-KR')}`;
+      document.getElementById('content').style.display = 'block';
+    }
+
+    function renderDashboard(allBrands) {
+      const totalBrands = allBrands.length;
+      let totalDone = 0, totalTasks = 0;
+
+      allBrands.forEach(brand => {
+        const tasks = brand.op_tasks || [];
+        ALL_TASKS.forEach(t => {
+          totalTasks++;
+          const found = tasks.find(x => x.stage === t.stage && x.task_key === t.key);
+          if (found?.is_completed) totalDone++;
+        });
+      });
+
+      const completedBrands = allBrands.filter(b => {
+        const tasks = b.op_tasks || [];
+        return ALL_TASKS.every(t => {
+          const f = tasks.find(x => x.stage === t.stage && x.task_key === t.key);
+          return f?.is_completed;
+        });
+      }).length;
+
+      const overallPct = totalTasks > 0 ? Math.round((totalDone / totalTasks) * 100) : 0;
+
+      // 요약 카드
+      document.getElementById('summaryGrid').innerHTML = `
+        <div class="summary-card c-purple">
+          <div class="label">담당 브랜드 수</div>
+          <div class="value">${totalBrands}</div>
+          <div class="sub">전체 팀원 합산</div>
+        </div>
+        <div class="summary-card c-green">
+          <div class="label">완전 완료 브랜드</div>
+          <div class="value">${completedBrands}</div>
+          <div class="sub">모든 항목 체크 완료</div>
+        </div>
+        <div class="summary-card c-yellow">
+          <div class="label">진행 중 브랜드</div>
+          <div class="value">${totalBrands - completedBrands}</div>
+          <div class="sub">아직 미완료 항목 있음</div>
+        </div>
+        <div class="summary-card c-teal">
+          <div class="label">전체 완료율</div>
+          <div class="value">${overallPct}%</div>
+          <div class="sub">${totalDone}/${totalTasks} 항목 완료</div>
+        </div>
+      `;
+
+      // 팀원별
+      const wrap = document.getElementById('membersWrap');
+      wrap.innerHTML = '';
+
+      MEMBERS.forEach(member => {
+        const brands = allBrands.filter(b => b.member_name === member.name);
+        let mDone = 0, mTotal = 0;
+        brands.forEach(brand => {
+          const tasks = brand.op_tasks || [];
+          ALL_TASKS.forEach(t => {
+            mTotal++;
+            const f = tasks.find(x => x.stage === t.stage && x.task_key === t.key);
+            if (f?.is_completed) mDone++;
+          });
+        });
+        const mPct = mTotal > 0 ? Math.round((mDone / mTotal) * 100) : 0;
+        const rateClass = mPct >= 80 ? 'rate-good' : mPct >= 40 ? 'rate-mid' : 'rate-low';
+
+        const sec = document.createElement('div');
+        sec.className = 'member-section';
+
+        const initial = member.name[1]; // 두 번째 글자
+
+        let brandsHtml = '';
+        if (brands.length === 0) {
+          brandsHtml = `<tr class="empty-row"><td colspan="4">담당 브랜드 없음</td></tr>`;
+        } else {
+          brands.forEach(brand => {
+            const tasks = brand.op_tasks || [];
+            let bDone = 0;
+            ALL_TASKS.forEach(t => {
+              const f = tasks.find(x => x.stage === t.stage && x.task_key === t.key);
+              if (f?.is_completed) bDone++;
+            });
+            const bPct = Math.round((bDone / ALL_TASKS.length) * 100);
+            const dotColor = bPct === 100 ? '#22c55e' : bPct > 0 ? '#f59e0b' : '#6b6b80';
+
+            const preChips = PRE_TASKS.map(t => {
+              const f = tasks.find(x => x.stage === 'pre' && x.task_key === t.key);
+              const done = f?.is_completed;
+              return `<span class="task-chip ${done ? 'done' : 'todo'}">${t.label}</span>`;
+            }).join('');
+
+            const postChips = POST_TASKS.map(t => {
+              const f = tasks.find(x => x.stage === 'post' && x.task_key === t.key);
+              const done = f?.is_completed;
+              return `<span class="task-chip ${done ? 'done' : 'todo'}">${t.label}</span>`;
+            }).join('');
+
+            brandsHtml += `
+              <tr>
+                <td>
+                  <div class="brand-name-cell">
+                    <div class="brand-dot" style="background:${dotColor}"></div>
+                    ${brand.brand_name}
+                  </div>
+                </td>
+                <td>
+                  <div class="task-checks">${preChips}</div>
+                </td>
+                <td>
+                  <div class="task-checks">${postChips}</div>
+                </td>
+                <td>
+                  <div class="progress-cell">
+                    <div class="mini-bar-bg">
+                      <div class="mini-bar-fill" style="width:${bPct}%"></div>
+                    </div>
+                    <div class="mini-bar-text">${bDone}/${ALL_TASKS.length} · ${bPct}%</div>
+                  </div>
+                </td>
+              </tr>
+            `;
+          });
+        }
+
+        sec.innerHTML = `
+          <div class="member-section-header">
+            <div class="member-avatar ${member.cls}">${initial}</div>
+            <div>
+              <div class="name">${member.name}</div>
+              <div class="stats">브랜드 ${brands.length}개 · ${mDone}/${mTotal} 완료</div>
+            </div>
+            <div class="member-rate ${rateClass}">${mPct}%</div>
+          </div>
+          <table class="brand-table">
+            <thead>
+              <tr>
+                <th>브랜드</th>
+                <th>수주전</th>
+                <th>수주후</th>
+                <th>완료율</th>
+              </tr>
+            </thead>
+            <tbody>${brandsHtml}</tbody>
+          </table>
+        `;
+
+        wrap.appendChild(sec);
+      });
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', loadData);
+    loadData();
+
+    // 30초마다 자동 새로고침
+    setInterval(loadData, 30000);
+  </script>
+</body>
+</html>
