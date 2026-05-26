@@ -8,239 +8,114 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0a0a0f;
-      --surface: #13131a;
-      --card: #1a1a26;
-      --card2: #1e1e2e;
-      --border: rgba(255,255,255,0.07);
-      --accent: #7c6af7;
-      --accent2: #5eead4;
-      --text: #f0f0f8;
-      --muted: #6b6b80;
-      --success: #22c55e;
-      --warn: #f59e0b;
-      --danger: #ef4444;
+      --bg: #0a0a0f; --surface: #13131a; --card: #1a1a26; --card2: #1e1e2e;
+      --border: rgba(255,255,255,0.07); --accent: #7c6af7; --accent2: #5eead4;
+      --text: #f0f0f8; --muted: #6b6b80;
+      --success: #22c55e; --warn: #f59e0b; --danger: #ef4444;
     }
-    body {
-      font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding-bottom: 60px;
-    }
-    .glow-bg {
-      position: fixed; top: -200px; left: 50%;
-      transform: translateX(-50%);
-      width: 900px; height: 500px;
-      background: radial-gradient(ellipse, rgba(124,106,247,0.12) 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
-    }
+    body { font-family: 'Pretendard','Apple SD Gothic Neo',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 60px; }
+    .glow-bg { position: fixed; top: -200px; left: 50%; transform: translateX(-50%); width: 900px; height: 500px; background: radial-gradient(ellipse, rgba(124,106,247,0.12) 0%, transparent 70%); pointer-events: none; z-index: 0; }
 
     /* 헤더 */
-    header {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(10,10,15,0.9);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 28px;
-      height: 64px;
-      display: flex; align-items: center; gap: 16px;
-    }
-    .back-btn {
-      color: var(--muted); text-decoration: none;
-      font-size: 22px; transition: color 0.2s;
-    }
-    .back-btn:hover { color: var(--text); }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 28px; height: 64px; display: flex; align-items: center; gap: 16px; }
     .header-title { font-size: 18px; font-weight: 700; }
     .header-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
-    .refresh-btn {
-      margin-left: auto;
-      padding: 8px 16px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--muted); font-size: 13px; font-weight: 500;
-      cursor: pointer; font-family: inherit;
-      transition: all 0.2s;
-    }
+    .header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .refresh-btn { padding: 8px 16px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.2s; }
     .refresh-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+    .last-update { font-size: 11px; color: var(--muted); }
 
     /* 메인 */
-    .main {
-      position: relative; z-index: 1;
-      max-width: 1100px; margin: 0 auto;
-      padding: 32px 24px 0;
-    }
-
-    /* 요약 카드들 */
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
-      margin-bottom: 32px;
-    }
-    .summary-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px 22px;
-    }
-    .summary-card .label {
-      font-size: 12px; color: var(--muted);
-      font-weight: 500; margin-bottom: 8px;
-    }
-    .summary-card .value {
-      font-size: 28px; font-weight: 800;
-    }
-    .summary-card .sub {
-      font-size: 12px; color: var(--muted); margin-top: 4px;
-    }
-    .c-purple .value { color: var(--accent); }
-    .c-green .value { color: var(--success); }
-    .c-yellow .value { color: var(--warn); }
-    .c-teal .value { color: var(--accent2); }
+    .main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 28px 24px 0; }
 
     /* 섹션 타이틀 */
-    .section-title {
-      font-size: 13px; font-weight: 600;
-      color: var(--muted); letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-    }
+    .section-title { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
 
-    /* 팀원 섹션들 */
-    .members-wrap {
-      display: flex; flex-direction: column; gap: 24px;
-    }
+    /* 요약 카드 그리드 */
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .summary-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; }
+    .summary-card .sc-label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
+    .summary-card .sc-value { font-size: 26px; font-weight: 800; }
+    .summary-card .sc-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .c-purple .sc-value { color: var(--accent); }
+    .c-green  .sc-value { color: var(--success); }
+    .c-yellow .sc-value { color: var(--warn); }
+    .c-teal   .sc-value { color: var(--accent2); }
+    .c-red    .sc-value { color: var(--danger); }
 
-    .member-section {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      overflow: hidden;
-    }
+    /* 이달 정산 하이라이트 */
+    .settlement-highlight { background: linear-gradient(135deg, rgba(94,234,212,0.08), rgba(124,106,247,0.08)); border: 1px solid rgba(94,234,212,0.2); border-radius: 18px; padding: 20px 24px; margin-bottom: 28px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .sh-icon { font-size: 32px; }
+    .sh-info { flex: 1; }
+    .sh-title { font-size: 13px; font-weight: 600; color: var(--accent2); margin-bottom: 2px; }
+    .sh-month { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+    .sh-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+    .sh-stat .label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .sh-stat .value { font-size: 22px; font-weight: 800; color: var(--accent2); }
+    .sh-stat .value.count { color: var(--accent); }
 
-    .member-section-header {
-      padding: 18px 24px;
-      display: flex; align-items: center; gap: 14px;
-      border-bottom: 1px solid var(--border);
-    }
+    /* 이달 정산 브랜드 목록 */
+    .month-brands { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .month-brand-chip { padding: 5px 12px; background: rgba(94,234,212,0.1); border: 1px solid rgba(94,234,212,0.2); border-radius: 100px; font-size: 12px; color: var(--accent2); }
+    .month-brand-chip .chip-member { color: var(--muted); margin-left: 4px; font-size: 11px; }
 
-    .member-avatar {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; font-weight: 700; flex-shrink: 0;
-    }
-    .c1 { background: rgba(239,68,68,0.2); color: #f87171; }
-    .c2 { background: rgba(234,179,8,0.2); color: #fbbf24; }
-    .c3 { background: rgba(34,197,94,0.2); color: #4ade80; }
-    .c4 { background: rgba(59,130,246,0.2); color: #60a5fa; }
-    .c5 { background: rgba(168,85,247,0.2); color: #c084fc; }
-
-    .member-section-header .name {
-      font-size: 16px; font-weight: 700;
-    }
-    .member-section-header .stats {
-      font-size: 12px; color: var(--muted); margin-top: 2px;
-    }
-    .member-rate {
-      margin-left: auto;
-      font-size: 22px; font-weight: 800;
-    }
+    /* 팀원 섹션 */
+    .members-wrap { display: flex; flex-direction: column; gap: 20px; }
+    .member-section { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+    .member-section-header { padding: 16px 22px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
+    .member-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+    .c1 { background: rgba(239,68,68,0.2);   color: #f87171; }
+    .c2 { background: rgba(234,179,8,0.2);   color: #fbbf24; }
+    .c3 { background: rgba(34,197,94,0.2);   color: #4ade80; }
+    .c4 { background: rgba(59,130,246,0.2);  color: #60a5fa; }
+    .c5 { background: rgba(168,85,247,0.2);  color: #c084fc; }
+    .member-section-header .name { font-size: 16px; font-weight: 700; }
+    .member-section-header .stats { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .member-link { margin-left: auto; padding: 6px 12px; background: rgba(124,106,247,0.12); border: 1px solid rgba(124,106,247,0.25); border-radius: 8px; color: var(--accent); font-size: 12px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+    .member-link:hover { background: rgba(124,106,247,0.2); }
+    .member-rate { font-size: 20px; font-weight: 800; margin-right: 8px; }
     .rate-good { color: var(--success); }
-    .rate-mid { color: var(--warn); }
-    .rate-low { color: var(--danger); }
+    .rate-mid  { color: var(--warn); }
+    .rate-low  { color: var(--danger); }
 
     /* 브랜드 테이블 */
-    .brand-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .brand-table th {
-      padding: 10px 16px;
-      font-size: 11px; font-weight: 600;
-      color: var(--muted); text-align: left;
-      border-bottom: 1px solid var(--border);
-      background: rgba(255,255,255,0.02);
-    }
-    .brand-table td {
-      padding: 14px 16px;
-      font-size: 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      vertical-align: middle;
-    }
+    .brand-table { width: 100%; border-collapse: collapse; }
+    .brand-table th { padding: 9px 14px; font-size: 11px; font-weight: 600; color: var(--muted); text-align: left; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+    .brand-table td { padding: 13px 14px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
     .brand-table tr:last-child td { border-bottom: none; }
     .brand-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .brand-name-cell { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .brand-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-    .brand-name-cell {
-      font-weight: 600; display: flex; align-items: center; gap: 8px;
-    }
-    .brand-dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-    }
+    /* 체크 칩 */
+    .task-checks { display: flex; gap: 4px; flex-wrap: wrap; }
+    .task-chip { padding: 3px 8px; border-radius: 100px; font-size: 11px; font-weight: 500; }
+    .task-chip.done { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .task-chip.todo { background: rgba(255,255,255,0.05); color: var(--muted); }
 
-    /* 체크 뱃지 */
-    .task-checks {
-      display: flex; gap: 5px; flex-wrap: wrap;
-    }
-    .task-chip {
-      padding: 3px 10px;
-      border-radius: 100px;
-      font-size: 11px; font-weight: 500;
-    }
-    .task-chip.done {
-      background: rgba(34,197,94,0.15);
-      color: #4ade80;
-    }
-    .task-chip.todo {
-      background: rgba(255,255,255,0.05);
-      color: var(--muted);
-    }
-
-    /* 진행률 셀 */
-    .progress-cell { min-width: 120px; }
-    .mini-bar-bg {
-      height: 6px; border-radius: 100px;
-      background: rgba(255,255,255,0.06);
-      overflow: hidden; margin-bottom: 4px;
-    }
-    .mini-bar-fill {
-      height: 100%; border-radius: 100px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      transition: width 0.5s;
-    }
+    /* 진행률 */
+    .progress-cell { min-width: 100px; }
+    .mini-bar-bg { height: 5px; border-radius: 100px; background: rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 4px; }
+    .mini-bar-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
     .mini-bar-text { font-size: 11px; color: var(--muted); }
 
-    /* 빈 상태 */
-    .empty-row td {
-      text-align: center; padding: 32px;
-      color: var(--muted); font-size: 14px;
-    }
+    /* 정산 셀 */
+    .settlement-cell { font-size: 12px; }
+    .settle-date { color: var(--accent2); font-weight: 600; }
+    .settle-amount { color: var(--text); margin-top: 2px; }
+    .settle-none { color: var(--muted); }
+
+    /* 빈 행 */
+    .empty-row td { text-align: center; padding: 28px; color: var(--muted); font-size: 13px; }
 
     /* 로딩 */
-    .loading {
-      text-align: center; padding: 80px 20px; color: var(--muted);
-    }
-    .spinner {
-      width: 36px; height: 36px;
-      border: 3px solid rgba(124,106,247,0.2);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 16px;
-    }
+    .loading { text-align: center; padding: 80px 20px; color: var(--muted); }
+    .spinner { width: 36px; height: 36px; border: 3px solid rgba(124,106,247,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .last-updated {
-      text-align: right;
-      font-size: 12px; color: var(--muted);
-      margin-bottom: 20px;
-    }
-
-    @media (max-width: 640px) {
-      .brand-table th:nth-child(3),
-      .brand-table td:nth-child(3) { display: none; }
+    @media (max-width: 700px) {
+      .brand-table th:nth-child(3), .brand-table td:nth-child(3),
+      .brand-table th:nth-child(4), .brand-table td:nth-child(4) { display: none; }
     }
   </style>
 </head>
@@ -248,26 +123,28 @@
   <div class="glow-bg"></div>
 
   <header>
-    <a class="back-btn" href="/">←</a>
     <div>
       <div class="header-title">📊 어드민 대시보드</div>
       <div class="header-sub">전체 팀원 업무 현황</div>
     </div>
-    <button class="refresh-btn" id="refreshBtn">↻ 새로고침</button>
+    <div class="header-right">
+      <span class="last-update" id="lastUpdate"></span>
+      <button class="refresh-btn" id="refreshBtn">↻ 새로고침</button>
+    </div>
   </header>
 
   <div class="main">
-    <div class="loading" id="loadingEl">
-      <div class="spinner"></div>
-      <div>데이터 불러오는 중...</div>
-    </div>
+    <div class="loading" id="loadingEl"><div class="spinner"></div><div>데이터 불러오는 중...</div></div>
 
     <div id="content" style="display:none">
-      <!-- 요약 -->
+      <!-- 전체 요약 -->
+      <div class="section-title">전체 요약</div>
       <div class="summary-grid" id="summaryGrid"></div>
 
-      <div class="last-updated" id="lastUpdated"></div>
+      <!-- 이달 정산 하이라이트 -->
+      <div class="settlement-highlight" id="settlementHighlight"></div>
 
+      <!-- 팀원별 현황 -->
       <div class="section-title">팀원별 현황</div>
       <div class="members-wrap" id="membersWrap"></div>
     </div>
@@ -275,33 +152,32 @@
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
-    const SUPABASE_URL = 'https://cknmkcgnzunuvlsnlxuj.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNrbm1rY2duenVudXZsc25seHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1NjU1NzYsImV4cCI6MjA5NDE0MTU3Nn0.ZIvQYIPkBKY6Ys73MINdbfCPLU3V7-gfkcLJO-P5tFM';
-    const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const sb = createClient(
+      'https://cknmkcgnzunuvlsnlxuj.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNrbm1rY2duenVudXZsc25seHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1NjU1NzYsImV4cCI6MjA5NDE0MTU3Nn0.ZIvQYIPkBKY6Ys73MINdbfCPLU3V7-gfkcLJO-P5tFM'
+    );
 
     const MEMBERS = [
-      { name: '김병찬', cls: 'c1' },
-      { name: '김요엘',  cls: 'c2' },
-      { name: '최진유', cls: 'c3' },
-      { name: '강사랑', cls: 'c4' },
-      { name: '신예지', cls: 'c5' },
+      { name:'김병찬', cls:'c1' },
+      { name:'김요엘',  cls:'c2' },
+      { name:'최진유', cls:'c3' },
+      { name:'강사랑', cls:'c4' },
+      { name:'신예지', cls:'c5' },
     ];
-
-    const PRE_TASKS = [
-      { key: 'meeting_material', label: '미팅자료' },
-      { key: 'proposal', label: '실행안/제안서' },
+    const PRE_TASKS  = [
+      { key:'meeting_material', label:'미팅자료' },
+      { key:'proposal',         label:'실행안/제안서' },
     ];
     const POST_TASKS = [
-      { key: 'google_sheet', label: '구글시트' },
-      { key: 'vendor_upload', label: '업체 업로드' },
-      { key: 'quotation', label: '견적서' },
-      { key: 'invoice', label: '계산서' },
-      { key: 'settlement', label: '정산 일정' },
+      { key:'google_sheet',  label:'구글시트' },
+      { key:'vendor_upload', label:'업체 업로드' },
+      { key:'quotation',     label:'견적서' },
+      { key:'invoice',       label:'계산서' },
+      { key:'settlement',    label:'정산 일정' },
     ];
     const ALL_TASKS = [
-      ...PRE_TASKS.map(t => ({...t, stage:'pre'})),
-      ...POST_TASKS.map(t => ({...t, stage:'post'}))
+      ...PRE_TASKS.map(t=>({...t,stage:'pre'})),
+      ...POST_TASKS.map(t=>({...t,stage:'post'}))
     ];
 
     async function loadData() {
@@ -314,146 +190,169 @@
         .order('created_at', { ascending: true });
 
       document.getElementById('loadingEl').style.display = 'none';
+      if (error) { alert('데이터 로드 실패: ' + error.message); return; }
 
-      if (error) { alert('데이터 로드 실패'); return; }
-
-      renderDashboard(data || []);
-      document.getElementById('lastUpdated').textContent =
-        `마지막 업데이트: ${new Date().toLocaleString('ko-KR')}`;
+      render(data || []);
+      document.getElementById('lastUpdate').textContent =
+        new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'}) + ' 기준';
       document.getElementById('content').style.display = 'block';
     }
 
-    function renderDashboard(allBrands) {
-      const totalBrands = allBrands.length;
-      let totalDone = 0, totalTasks = 0;
+    function taskDone(tasks, stage, key) {
+      return tasks.some(t => t.stage === stage && t.task_key === key && t.is_completed);
+    }
 
-      allBrands.forEach(brand => {
-        const tasks = brand.op_tasks || [];
+    function render(allBrands) {
+      const now = new Date();
+      const thisYear = now.getFullYear(), thisMonth = now.getMonth();
+
+      // ── 전체 통계
+      let totalDone = 0, totalTasks = 0;
+      allBrands.forEach(b => {
+        const tasks = b.op_tasks || [];
         ALL_TASKS.forEach(t => {
           totalTasks++;
-          const found = tasks.find(x => x.stage === t.stage && x.task_key === t.key);
-          if (found?.is_completed) totalDone++;
+          if (taskDone(tasks, t.stage, t.key)) totalDone++;
         });
       });
-
       const completedBrands = allBrands.filter(b => {
         const tasks = b.op_tasks || [];
-        return ALL_TASKS.every(t => {
-          const f = tasks.find(x => x.stage === t.stage && x.task_key === t.key);
-          return f?.is_completed;
-        });
+        return ALL_TASKS.every(t => taskDone(tasks, t.stage, t.key));
       }).length;
+      const overallPct = totalTasks > 0 ? Math.round((totalDone/totalTasks)*100) : 0;
 
-      const overallPct = totalTasks > 0 ? Math.round((totalDone / totalTasks) * 100) : 0;
+      // ── 이달 정산
+      const monthBrands = allBrands.filter(b => {
+        if (!b.settlement_date) return false;
+        const d = new Date(b.settlement_date);
+        return d.getFullYear() === thisYear && d.getMonth() === thisMonth;
+      });
+      const monthTotal = monthBrands.reduce((s,b) => s + (b.settlement_amount||0), 0);
+      const monthCount = monthBrands.length;
 
-      // 요약 카드
+      // ── 요약 카드
       document.getElementById('summaryGrid').innerHTML = `
         <div class="summary-card c-purple">
-          <div class="label">담당 브랜드 수</div>
-          <div class="value">${totalBrands}</div>
-          <div class="sub">전체 팀원 합산</div>
+          <div class="sc-label">전체 담당 브랜드</div>
+          <div class="sc-value">${allBrands.length}</div>
+          <div class="sc-sub">팀 전체 합산</div>
         </div>
         <div class="summary-card c-green">
-          <div class="label">완전 완료 브랜드</div>
-          <div class="value">${completedBrands}</div>
-          <div class="sub">모든 항목 체크 완료</div>
+          <div class="sc-label">완전 완료</div>
+          <div class="sc-value">${completedBrands}</div>
+          <div class="sc-sub">모든 항목 체크 완료</div>
         </div>
         <div class="summary-card c-yellow">
-          <div class="label">진행 중 브랜드</div>
-          <div class="value">${totalBrands - completedBrands}</div>
-          <div class="sub">아직 미완료 항목 있음</div>
+          <div class="sc-label">진행 중</div>
+          <div class="sc-value">${allBrands.length - completedBrands}</div>
+          <div class="sc-sub">미완료 항목 있음</div>
         </div>
         <div class="summary-card c-teal">
-          <div class="label">전체 완료율</div>
-          <div class="value">${overallPct}%</div>
-          <div class="sub">${totalDone}/${totalTasks} 항목 완료</div>
+          <div class="sc-label">전체 완료율</div>
+          <div class="sc-value">${overallPct}%</div>
+          <div class="sc-sub">${totalDone}/${totalTasks} 항목</div>
         </div>
       `;
 
-      // 팀원별
+      // ── 이달 정산 하이라이트
+      const monthLabel = `${now.getMonth()+1}월`;
+      const chipHtml = monthBrands.map(b =>
+        `<div class="month-brand-chip">${b.brand_name} <span class="chip-member">${b.member_name}</span></div>`
+      ).join('');
+      document.getElementById('settlementHighlight').innerHTML = `
+        <div class="sh-icon">💰</div>
+        <div class="sh-info">
+          <div class="sh-title">${monthLabel} 정산 현황</div>
+          <div class="sh-month">${now.getFullYear()}년 ${monthLabel} 기준</div>
+          <div class="sh-stats">
+            <div class="sh-stat">
+              <div class="label">정산 건수</div>
+              <div class="value count">${monthCount}건</div>
+            </div>
+            <div class="sh-stat">
+              <div class="label">정산 총액</div>
+              <div class="value">${monthTotal.toLocaleString('ko-KR')}원</div>
+            </div>
+          </div>
+          ${monthBrands.length > 0 ? `<div class="month-brands">${chipHtml}</div>` : ''}
+        </div>
+      `;
+
+      // ── 팀원별
       const wrap = document.getElementById('membersWrap');
       wrap.innerHTML = '';
 
       MEMBERS.forEach(member => {
         const brands = allBrands.filter(b => b.member_name === member.name);
         let mDone = 0, mTotal = 0;
-        brands.forEach(brand => {
-          const tasks = brand.op_tasks || [];
+        brands.forEach(b => {
+          const tasks = b.op_tasks || [];
           ALL_TASKS.forEach(t => {
             mTotal++;
-            const f = tasks.find(x => x.stage === t.stage && x.task_key === t.key);
-            if (f?.is_completed) mDone++;
+            if (taskDone(tasks, t.stage, t.key)) mDone++;
           });
         });
-        const mPct = mTotal > 0 ? Math.round((mDone / mTotal) * 100) : 0;
+        const mPct = mTotal > 0 ? Math.round((mDone/mTotal)*100) : 0;
         const rateClass = mPct >= 80 ? 'rate-good' : mPct >= 40 ? 'rate-mid' : 'rate-low';
 
-        const sec = document.createElement('div');
-        sec.className = 'member-section';
-
-        const initial = member.name[1]; // 두 번째 글자
+        // 이달 정산 (이 팀원의)
+        const myMonthBrands = brands.filter(b => {
+          if (!b.settlement_date) return false;
+          const d = new Date(b.settlement_date);
+          return d.getFullYear() === thisYear && d.getMonth() === thisMonth;
+        });
+        const myMonthAmt = myMonthBrands.reduce((s,b) => s + (b.settlement_amount||0), 0);
 
         let brandsHtml = '';
         if (brands.length === 0) {
-          brandsHtml = `<tr class="empty-row"><td colspan="4">담당 브랜드 없음</td></tr>`;
+          brandsHtml = `<tr class="empty-row"><td colspan="5">담당 브랜드 없음</td></tr>`;
         } else {
-          brands.forEach(brand => {
-            const tasks = brand.op_tasks || [];
+          brands.forEach(b => {
+            const tasks = b.op_tasks || [];
             let bDone = 0;
-            ALL_TASKS.forEach(t => {
-              const f = tasks.find(x => x.stage === t.stage && x.task_key === t.key);
-              if (f?.is_completed) bDone++;
-            });
+            ALL_TASKS.forEach(t => { if (taskDone(tasks, t.stage, t.key)) bDone++; });
             const bPct = Math.round((bDone / ALL_TASKS.length) * 100);
             const dotColor = bPct === 100 ? '#22c55e' : bPct > 0 ? '#f59e0b' : '#6b6b80';
 
-            const preChips = PRE_TASKS.map(t => {
-              const f = tasks.find(x => x.stage === 'pre' && x.task_key === t.key);
-              const done = f?.is_completed;
-              return `<span class="task-chip ${done ? 'done' : 'todo'}">${t.label}</span>`;
-            }).join('');
+            const preChips = PRE_TASKS.map(t =>
+              `<span class="task-chip ${taskDone(tasks,'pre',t.key)?'done':'todo'}">${t.label}</span>`
+            ).join('');
+            const postChips = POST_TASKS.map(t =>
+              `<span class="task-chip ${taskDone(tasks,'post',t.key)?'done':'todo'}">${t.label}</span>`
+            ).join('');
 
-            const postChips = POST_TASKS.map(t => {
-              const f = tasks.find(x => x.stage === 'post' && x.task_key === t.key);
-              const done = f?.is_completed;
-              return `<span class="task-chip ${done ? 'done' : 'todo'}">${t.label}</span>`;
-            }).join('');
+            const settleHtml = b.settlement_date
+              ? `<div class="settle-date">📅 ${new Date(b.settlement_date).toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'})}</div>
+                 <div class="settle-amount">${b.settlement_amount ? b.settlement_amount.toLocaleString('ko-KR')+'원' : '-'}</div>`
+              : `<div class="settle-none">미입력</div>`;
 
             brandsHtml += `
               <tr>
-                <td>
-                  <div class="brand-name-cell">
-                    <div class="brand-dot" style="background:${dotColor}"></div>
-                    ${brand.brand_name}
-                  </div>
-                </td>
-                <td>
-                  <div class="task-checks">${preChips}</div>
-                </td>
-                <td>
-                  <div class="task-checks">${postChips}</div>
-                </td>
+                <td><div class="brand-name-cell"><div class="brand-dot" style="background:${dotColor}"></div>${b.brand_name}</div></td>
+                <td><div class="task-checks">${preChips}</div></td>
+                <td><div class="task-checks">${postChips}</div></td>
+                <td><div class="settlement-cell">${settleHtml}</div></td>
                 <td>
                   <div class="progress-cell">
-                    <div class="mini-bar-bg">
-                      <div class="mini-bar-fill" style="width:${bPct}%"></div>
-                    </div>
+                    <div class="mini-bar-bg"><div class="mini-bar-fill" style="width:${bPct}%"></div></div>
                     <div class="mini-bar-text">${bDone}/${ALL_TASKS.length} · ${bPct}%</div>
                   </div>
                 </td>
-              </tr>
-            `;
+              </tr>`;
           });
         }
 
+        const sec = document.createElement('div');
+        sec.className = 'member-section';
         sec.innerHTML = `
           <div class="member-section-header">
-            <div class="member-avatar ${member.cls}">${initial}</div>
+            <div class="member-avatar ${member.cls}">${member.name[1]}</div>
             <div>
               <div class="name">${member.name}</div>
-              <div class="stats">브랜드 ${brands.length}개 · ${mDone}/${mTotal} 완료</div>
+              <div class="stats">브랜드 ${brands.length}개 · ${myMonthBrands.length > 0 ? `${myMonthAmt.toLocaleString('ko-KR')}원 (이달)` : '이달 정산 없음'}</div>
             </div>
             <div class="member-rate ${rateClass}">${mPct}%</div>
+            <a class="member-link" href="/member/?name=${encodeURIComponent(member.name)}" target="_blank">바로가기 →</a>
           </div>
           <table class="brand-table">
             <thead>
@@ -461,22 +360,19 @@
                 <th>브랜드</th>
                 <th>수주전</th>
                 <th>수주후</th>
+                <th>정산</th>
                 <th>완료율</th>
               </tr>
             </thead>
             <tbody>${brandsHtml}</tbody>
-          </table>
-        `;
-
+          </table>`;
         wrap.appendChild(sec);
       });
     }
 
     document.getElementById('refreshBtn').addEventListener('click', loadData);
     loadData();
-
-    // 30초마다 자동 새로고침
-    setInterval(loadData, 30000);
+    setInterval(loadData, 30000); // 30초 자동 갱신
   </script>
 </body>
 </html>
