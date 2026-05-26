@@ -161,9 +161,35 @@
       .btable th:nth-child(4),.btable td:nth-child(4),
       .btable th:nth-child(5),.btable td:nth-child(5) { display:none; }
     }
+
+    /* 비밀번호 화면 */
+    .pw-screen { position:fixed; inset:0; background:var(--bg); z-index:999; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .pw-box { background:var(--card); border:1px solid rgba(255,255,255,0.1); border-radius:24px; padding:36px 32px; width:100%; max-width:380px; text-align:center; }
+    .pw-icon { font-size:40px; margin-bottom:16px; }
+    .pw-title { font-size:20px; font-weight:800; margin-bottom:6px; }
+    .pw-sub { font-size:13px; color:var(--muted); margin-bottom:24px; }
+    .pw-input { width:100%; padding:14px 16px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; color:var(--text); font-size:16px; outline:none; font-family:inherit; text-align:center; letter-spacing:2px; transition:border-color 0.2s; color-scheme:dark; }
+    .pw-input:focus { border-color:var(--accent); }
+    .pw-input.shake { animation:shake 0.4s; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-8px)} 40%,80%{transform:translateX(8px)} }
+    .pw-btn { width:100%; margin-top:14px; padding:14px; background:var(--accent); border:none; border-radius:12px; color:#fff; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; transition:background 0.2s; }
+    .pw-btn:hover { background:#6a58e0; }
+    .pw-err { font-size:13px; color:var(--danger); margin-top:10px; min-height:18px; }
   </style>
 </head>
 <body>
+  <!-- 비밀번호 화면 -->
+  <div class="pw-screen" id="pwScreen">
+    <div class="pw-box">
+      <div class="pw-icon">🔐</div>
+      <div class="pw-title">어드민 대시보드</div>
+      <div class="pw-sub">접근하려면 비밀번호를 입력하세요</div>
+      <input class="pw-input" type="password" id="pwInput" placeholder="비밀번호" />
+      <button class="pw-btn" id="pwBtn">확인</button>
+      <div class="pw-err" id="pwErr"></div>
+    </div>
+  </div>
+
   <div class="glow"></div>
   <header>
     <div>
@@ -229,6 +255,35 @@
       <div class="members-wrap" id="membersWrap"></div>
     </div>
   </div>
+
+  <script>
+    (function() {
+      const PW = 'xmfkdlqm1583!';
+      const KEY = 'admin_auth';
+      if (sessionStorage.getItem(KEY) === '1') {
+        document.getElementById('pwScreen').style.display = 'none';
+        return;
+      }
+      const input = document.getElementById('pwInput');
+      const err   = document.getElementById('pwErr');
+      function attempt() {
+        if (input.value === PW) {
+          sessionStorage.setItem(KEY, '1');
+          document.getElementById('pwScreen').style.display = 'none';
+        } else {
+          err.textContent = '비밀번호가 틀렸어요';
+          input.value = '';
+          input.classList.remove('shake');
+          void input.offsetWidth;
+          input.classList.add('shake');
+          input.focus();
+        }
+      }
+      document.getElementById('pwBtn').addEventListener('click', attempt);
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') attempt(); });
+      input.focus();
+    })();
+  </script>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
