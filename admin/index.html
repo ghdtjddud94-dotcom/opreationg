@@ -134,8 +134,13 @@
     .msec-header .mstats { font-size:12px; color:var(--muted); margin-top:2px; }
     .mrate { font-size:18px; font-weight:800; margin-right:4px; }
     .rg{color:var(--success);} .ry{color:var(--warn);} .rr{color:var(--danger);}
-    .mlink { margin-left:auto; padding:5px 11px; background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.22); border-radius:7px; color:var(--accent); font-size:12px; font-weight:600; text-decoration:none; transition:all 0.2s; white-space:nowrap; }
+    .mlink { padding:5px 11px; background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.22); border-radius:7px; color:var(--accent); font-size:12px; font-weight:600; text-decoration:none; transition:all 0.2s; white-space:nowrap; }
     .mlink:hover { background:rgba(124,106,247,0.2); }
+    .msec-header { cursor:pointer; }
+    .msec-chevron { color:var(--muted); font-size:18px; transition:transform 0.3s; margin-left:10px; }
+    .member-sec.open .msec-chevron { transform:rotate(90deg); }
+    .msec-body { display:none; }
+    .member-sec.open .msec-body { display:block; }
     .btable { width:100%; border-collapse:collapse; }
     .btable th { padding:8px 14px; font-size:11px; font-weight:600; color:var(--muted); text-align:left; border-bottom:1px solid var(--border); background:rgba(255,255,255,0.02); }
     .btable td { padding:11px 14px; font-size:13px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
@@ -600,11 +605,18 @@
             </div>
             <div class="mrate ${rateClass}">${mPct}%</div>
             <a class="mlink" href="/member/?name=${encodeURIComponent(member.name)}" target="_blank">바로가기 →</a>
+            <span class="msec-chevron">›</span>
           </div>
-          <table class="btable">
-            <thead><tr><th>브랜드</th><th>유형</th><th>수주금액</th><th>진행 현황</th><th>정산</th><th>완료율</th></tr></thead>
-            <tbody>${rowsHtml}</tbody>
-          </table>`;
+          <div class="msec-body">
+            <table class="btable">
+              <thead><tr><th>브랜드</th><th>유형</th><th>수주금액</th><th>진행 현황</th><th>정산</th><th>완료율</th></tr></thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          </div>`;
+        sec.querySelector('.msec-header').addEventListener('click', e => {
+          if (e.target.closest('.mlink')) return;
+          sec.classList.toggle('open');
+        });
         wrap.appendChild(sec);
       });
     }

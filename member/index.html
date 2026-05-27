@@ -278,6 +278,9 @@
       </div>
     </div>
 
+    <div id="toggleAllWrap" style="display:none; text-align:right; margin-bottom:10px;">
+      <button id="toggleAllBtn" style="padding:7px 14px; background:rgba(255,255,255,0.06); border:1px solid var(--border); border-radius:10px; color:var(--muted); font-size:13px; font-weight:500; cursor:pointer; font-family:inherit; transition:all 0.2s;">전체 펼치기</button>
+    </div>
     <div class="empty" id="emptyEl" style="display:none">
       <div class="ei">📋</div>
       <h2>담당 브랜드가 없어요</h2>
@@ -454,6 +457,7 @@
       if (brands.length > 0) {
         document.getElementById('calendarWrap').style.display = 'block';
         document.getElementById('summaryWrap').style.display = 'block';
+        document.getElementById('toggleAllWrap').style.display = 'block';
       }
     }
 
@@ -906,6 +910,19 @@
       showToast(`"${name}" 추가됐어요 🎉`, 'ok');
       load();
     }
+
+    // ── 전체 펼치기/접기 ──────────────────────────────────────
+    let allExpanded = false;
+    document.getElementById('toggleAllBtn').addEventListener('click', () => {
+      allExpanded = !allExpanded;
+      document.querySelectorAll('.brand-card').forEach(card => {
+        card.classList.toggle('open', allExpanded);
+        const id = parseInt(card.dataset.id);
+        if (allExpanded) openCards.add(id);
+        else openCards.delete(id);
+      });
+      document.getElementById('toggleAllBtn').textContent = allExpanded ? '전체 접기' : '전체 펼치기';
+    });
 
     // ── 토스트 ────────────────────────────────────────────────
     function showToast(msg, type='ok') {
