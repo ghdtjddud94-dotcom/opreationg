@@ -118,6 +118,15 @@
     .filter-btn { padding:5px 13px; border-radius:100px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:12px; font-weight:500; cursor:pointer; font-family:inherit; transition:all 0.2s; }
     .filter-btn.active { background:rgba(124,106,247,0.15); border-color:rgba(124,106,247,0.4); color:var(--text); }
     .members-wrap { display:flex; flex-direction:column; gap:16px; }
+
+    /* 특이사항 */
+    .notes-grid { display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
+    .note-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; }
+    .note-card-header { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+    .note-avatar { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+    .note-brand { font-size:13px; font-weight:700; }
+    .note-member { font-size:11px; color:var(--muted); }
+    .note-body { font-size:13px; color:var(--text); line-height:1.6; white-space:pre-wrap; padding:10px 12px; background:rgba(255,255,255,0.03); border-radius:8px; }
     .member-sec { background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden; }
     .msec-header { padding:14px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border); }
     .mavatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0; }
@@ -242,6 +251,10 @@
         <div class="cal-grid" id="calGrid"></div>
         <div class="cal-detail" id="calDetail"></div>
       </div>
+
+      <!-- 특이사항 -->
+      <div class="sec-title">특이사항</div>
+      <div class="notes-grid" id="notesGrid"></div>
 
       <!-- 팀원별 현황 -->
       <div class="sec-title">팀원별 현황</div>
@@ -419,6 +432,9 @@
       // ── 캘린더
       renderCalendar();
 
+      // ── 특이사항
+      renderNotes();
+
       // ── 팀원별 현황
       renderMembers(filtered, yy, mm);
     }
@@ -504,6 +520,27 @@
       calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
       selectedDate = null; renderCalendar();
     });
+
+    // ── 특이사항 ─────────────────────────────────────────────
+    function renderNotes() {
+      const noteBrands = allBrands.filter(b => b.notes && b.notes.trim());
+      const grid = document.getElementById('notesGrid');
+      if (!noteBrands.length) {
+        grid.innerHTML = '<div style="padding:16px;color:var(--muted);font-size:13px;">특이사항이 없어요</div>';
+        return;
+      }
+      grid.innerHTML = noteBrands.map(b => `
+        <div class="note-card">
+          <div class="note-card-header">
+            <div class="note-avatar ${MEMBER_CLS[b.member_name]||'c1'}">${b.member_name[1]}</div>
+            <div>
+              <div class="note-brand">${b.brand_name}</div>
+              <div class="note-member">${b.member_name}</div>
+            </div>
+          </div>
+          <div class="note-body">${b.notes}</div>
+        </div>`).join('');
+    }
 
     // ── 팀원별 현황 ─────────────────────────────────────────
     function renderMembers(filtered, yy, mm) {
