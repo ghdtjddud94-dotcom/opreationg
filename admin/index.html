@@ -258,8 +258,16 @@
       </div>
 
       <!-- 특이사항 -->
-      <div class="sec-title">특이사항</div>
-      <div class="notes-grid" id="notesGrid"></div>
+      <div class="member-sec" id="notesSec" style="margin-bottom:24px;">
+        <div class="msec-header" id="notesToggle" style="padding:14px 20px; display:flex; align-items:center; gap:10px;">
+          <div style="flex:1; font-size:14px; font-weight:700;">📝 특이사항</div>
+          <span class="bh-badge" id="notesBadge" style="background:rgba(124,106,247,0.15); color:var(--accent); padding:3px 10px; border-radius:100px; font-size:12px; font-weight:600;">0건</span>
+          <span class="msec-chevron">›</span>
+        </div>
+        <div class="msec-body">
+          <div class="notes-grid" id="notesGrid" style="padding:0 4px 4px;"></div>
+        </div>
+      </div>
 
       <!-- 팀원별 현황 -->
       <div class="sec-title">팀원별 현황</div>
@@ -527,8 +535,13 @@
     });
 
     // ── 특이사항 ─────────────────────────────────────────────
+    document.getElementById('notesToggle').addEventListener('click', () => {
+      document.getElementById('notesSec').classList.toggle('open');
+    });
+
     function renderNotes() {
       const noteBrands = allBrands.filter(b => b.notes && b.notes.trim());
+      document.getElementById('notesBadge').textContent = `${noteBrands.length}건`;
       const grid = document.getElementById('notesGrid');
       if (!noteBrands.length) {
         grid.innerHTML = '<div style="padding:16px;color:var(--muted);font-size:13px;">특이사항이 없어요</div>';
