@@ -168,6 +168,36 @@
     .mcancel-only { padding:3px 0; text-align:center; margin-top:8px; }
     .mcancel-only button { background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer; font-family:inherit; }
 
+    /* 오늘의 업무 + 이달 정산 */
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
+    @media(max-width:600px) { .two-col { grid-template-columns:1fr; } }
+    .sum-box { background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden; }
+    .sum-box .box-header { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+    .box-header .bh-icon { font-size:18px; }
+    .box-header .bh-title { font-size:14px; font-weight:700; }
+    .box-header .bh-badge { margin-left:auto; padding:3px 10px; background:rgba(124,106,247,0.15); border-radius:100px; font-size:12px; color:var(--accent); font-weight:600; }
+    .box-header .bh-badge.teal { background:rgba(94,234,212,0.15); color:var(--accent2); }
+    .sum-box .box-body { padding:10px 14px; max-height:220px; overflow-y:auto; }
+    .sum-box .box-body::-webkit-scrollbar { width:4px; }
+    .sum-box .box-body::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
+    .sum-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:9px; margin-bottom:4px; background:rgba(255,255,255,0.02); }
+    .sum-item:last-child { margin-bottom:0; }
+    .si-label { flex:1; font-size:13px; font-weight:500; }
+    .si-sub { font-size:11px; color:var(--muted); }
+    .si-check { width:16px; height:16px; border-radius:5px; border:2px solid rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .si-check.done { background:var(--success); border-color:var(--success); }
+    .si-check.done::after { content:'✓'; color:#fff; font-size:9px; font-weight:700; }
+    .settle-row { display:flex; align-items:center; gap:10px; padding:9px 10px; border-bottom:1px solid rgba(255,255,255,0.04); }
+    .settle-row:last-of-type { border-bottom:none; }
+    .sr-date { font-size:12px; color:var(--accent2); font-weight:600; white-space:nowrap; }
+    .sr-info { flex:1; min-width:0; }
+    .sr-brand { font-size:13px; font-weight:600; }
+    .sr-amt { font-size:13px; font-weight:700; white-space:nowrap; }
+    .settle-total { padding:10px 14px; background:rgba(94,234,212,0.05); border-top:1px solid rgba(94,234,212,0.15); display:flex; justify-content:space-between; align-items:center; }
+    .settle-total span:first-child { font-size:12px; color:var(--muted); }
+    .settle-total span:last-child { font-size:15px; font-weight:800; color:var(--accent2); }
+    .box-empty { padding:24px 14px; text-align:center; color:var(--muted); font-size:13px; }
+
     /* 로딩 / 토스트 */
     .loading { text-align:center; padding:60px 20px; color:var(--muted); }
     .spinner { width:32px; height:32px; border:3px solid rgba(124,106,247,0.2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 12px; }
@@ -196,6 +226,28 @@
 
   <div class="main">
     <div class="loading" id="loadingEl"><div class="spinner"></div><div>불러오는 중...</div></div>
+
+    <!-- 오늘의 업무 + 이달 정산 -->
+    <div id="summaryWrap" style="display:none">
+      <div class="two-col">
+        <div class="sum-box">
+          <div class="box-header">
+            <span class="bh-icon">☀️</span>
+            <span class="bh-title" id="todayTitle">오늘의 업무</span>
+            <span class="bh-badge" id="todayBadge">0건</span>
+          </div>
+          <div class="box-body" id="todayBody"></div>
+        </div>
+        <div class="sum-box">
+          <div class="box-header">
+            <span class="bh-icon">💰</span>
+            <span class="bh-title" id="settleTitle">이달 정산</span>
+            <span class="bh-badge teal" id="settleBadge">0건</span>
+          </div>
+          <div class="box-body" id="settleBody"></div>
+        </div>
+      </div>
+    </div>
 
     <!-- 캘린더 -->
     <div id="calendarWrap" style="display:none">
@@ -351,9 +403,13 @@
       if (error) { showToast('데이터 로드 실패', 'err'); return; }
       brands = data || [];
       renderBanner();
+      renderSummary();
       renderCalendar();
       renderBrands();
-      if (brands.length > 0) document.getElementById('calendarWrap').style.display = 'block';
+      if (brands.length > 0) {
+        document.getElementById('calendarWrap').style.display = 'block';
+        document.getElementById('summaryWrap').style.display = 'block';
+      }
     }
 
     // ── 배너 ──────────────────────────────────────────────────
@@ -372,6 +428,67 @@
         document.getElementById('monthCount').textContent = `${settled.length}건`;
         document.getElementById('monthAmount').textContent = total.toLocaleString('ko-KR') + '원';
       } else banner.style.display = 'none';
+    }
+
+    // ── 오늘의 업무 + 이달 정산 요약 ────────────────────────────
+    function renderSummary() {
+      const now = new Date();
+      const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+      const yy = now.getFullYear(), mm = now.getMonth();
+      const todayDate = now.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'});
+
+      // 오늘의 업무
+      const todayItems = [];
+      brands.forEach(b => {
+        const tasks = b.op_tasks || [];
+        tasks.forEach(task => {
+          if (task.task_date === todayStr) {
+            const def = TASKS.find(t => t.key === task.task_key);
+            todayItems.push({ brandName:b.brand_name, label:def?.label||task.task_key, isDone:task.is_completed });
+          }
+        });
+        if (b.settlement_date === todayStr) {
+          todayItems.push({ brandName:b.brand_name, label:'정산일자', isDone:true });
+        }
+      });
+      document.getElementById('todayTitle').textContent = `오늘의 업무 (${todayDate})`;
+      document.getElementById('todayBadge').textContent = `${todayItems.length}건`;
+      document.getElementById('todayBody').innerHTML = todayItems.length
+        ? todayItems.map(it => `
+            <div class="sum-item">
+              <div class="si-info">
+                <div class="si-sub">${it.brandName}</div>
+                <div class="si-label">${it.label}</div>
+              </div>
+              <div class="si-check ${it.isDone?'done':''}"></div>
+            </div>`).join('')
+        : '<div class="box-empty">오늘 예정된 업무가 없어요</div>';
+
+      // 이달 정산
+      const mBrands = brands.filter(b => {
+        if (!b.settlement_date) return false;
+        const d = new Date(b.settlement_date);
+        return d.getFullYear() === yy && d.getMonth() === mm;
+      }).sort((a,b) => a.settlement_date.localeCompare(b.settlement_date));
+      const mTotal = mBrands.reduce((s,b) => s + (b.settlement_amount||0), 0);
+      document.getElementById('settleTitle').textContent = `${mm+1}월 정산`;
+      document.getElementById('settleBadge').textContent = `${mBrands.length}건`;
+      const settleBody = document.getElementById('settleBody');
+      if (!mBrands.length) {
+        settleBody.innerHTML = '<div class="box-empty">이달 정산 건이 없어요</div>';
+      } else {
+        settleBody.innerHTML = mBrands.map(b => {
+          const ds = new Date(b.settlement_date).toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'});
+          return `<div class="settle-row">
+            <div class="sr-date">📅 ${ds}</div>
+            <div class="sr-info"><div class="sr-brand">${b.brand_name}</div></div>
+            <div class="sr-amt">${b.settlement_amount ? b.settlement_amount.toLocaleString('ko-KR')+'원' : '-'}</div>
+          </div>`;
+        }).join('') + `<div class="settle-total">
+          <span>이달 총액</span>
+          <span>${mTotal.toLocaleString('ko-KR')}원</span>
+        </div>`;
+      }
     }
 
     // ── 캘린더 ─────────────────────────────────────────────────

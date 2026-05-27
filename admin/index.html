@@ -468,34 +468,32 @@
         </div>`;
       }
       document.getElementById('calGrid').innerHTML = html;
-      document.querySelectorAll('.cal-day[data-date]').forEach(el => {
-        el.addEventListener('click', () => selectDate(el.dataset.date, map));
+      document.getElementById('calGrid').querySelectorAll('.cal-day[data-date]').forEach(el => {
+        el.addEventListener('click', () => { selectedDate = el.dataset.date; renderCalendar(); });
       });
-      if (selectedDate) selectDate(selectedDate, map);
-    }
 
-    function selectDate(dateStr, map) {
-      selectedDate = dateStr;
-      renderCalendar();
-      const items = (map || buildTasksByDate())[dateStr] || [];
       const detail = document.getElementById('calDetail');
-      if (!items.length) { detail.className = 'cal-detail'; return; }
-      const d = new Date(dateStr);
-      const label = d.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'});
-      detail.innerHTML = `
-        <div class="cal-detail-title">📅 ${label} · ${items.length}건</div>
-        <div class="cal-detail-items">
-          ${items.map(it => `
-            <div class="cd-item">
-              <div class="cd-avatar ${it.cls}">${it.memberName[1]}</div>
-              <div class="cd-info">
-                <div class="cd-brand">${it.memberName} · ${it.brandName}</div>
-                <div class="cd-label">${it.label}</div>
-              </div>
-              <div class="cd-check ${it.isDone?'done':''}"></div>
-            </div>`).join('')}
-        </div>`;
-      detail.className = 'cal-detail show';
+      if (selectedDate && map[selectedDate]?.length) {
+        const items = map[selectedDate];
+        const d = new Date(selectedDate);
+        const label = d.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'});
+        detail.innerHTML = `
+          <div class="cal-detail-title">📅 ${label} · ${items.length}건</div>
+          <div class="cal-detail-items">
+            ${items.map(it => `
+              <div class="cd-item">
+                <div class="cd-avatar ${it.cls}">${it.memberName[1]}</div>
+                <div class="cd-info">
+                  <div class="cd-brand">${it.memberName} · ${it.brandName}</div>
+                  <div class="cd-label">${it.label}</div>
+                </div>
+                <div class="cd-check ${it.isDone?'done':''}"></div>
+              </div>`).join('')}
+          </div>`;
+        detail.className = 'cal-detail show';
+      } else {
+        detail.className = 'cal-detail';
+      }
     }
 
     document.getElementById('calPrev').addEventListener('click', () => {
